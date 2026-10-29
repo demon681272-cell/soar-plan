@@ -1,0 +1,1126 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>SOAR แผนกลยุทธ์สถานศึกษา</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@600;700&family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: input pane (SOAR) left, two-step AI workflow right — 1 analyse, 2 build plan */
+:root{
+  --bg:#F1F4F3; --surface:#FFFFFF; --surface-2:#F7F9F8; --surface-3:#EAEEED;
+  --line:#D7DEDC; --line-strong:#B5C1BF;
+  --ink:#16201F; --ink-2:#44524F; --ink-3:#6E7D7A;
+  --s:#0D6E66; --s-soft:#DFEFEC;
+  --o:#2F4BA0; --o-soft:#E4E9F7;
+  --a:#8A2F60; --a-soft:#F6E4EE;
+  --r:#5C7215; --r-soft:#EBF2D9;
+  --ok:#2E6B3E; --ok-soft:#E2F0E6;
+  --warn:#8E5610; --warn-soft:#FAEEDA;
+  --bad:#A32A2A; --bad-soft:#F8E3E1;
+  --pv:#7A4A12; --pv-soft:#F3E8D8;
+  --shadow:0 1px 2px rgba(20,35,33,.05), 0 8px 24px -16px rgba(20,35,33,.25);
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --body:"Sarabun","Leelawadee UI","Tahoma",sans-serif;
+  --display:"Noto Serif Thai","Sarabun",serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1413; --surface:#171F1E; --surface-2:#1D2625; --surface-3:#24302E;
+  --line:#2A3433; --line-strong:#3D4A48;
+  --ink:#E7EDEB; --ink-2:#AEBAB7; --ink-3:#808D8A;
+  --s:#4CC6B7; --s-soft:#10322E; --o:#93A7EA; --o-soft:#1A2240;
+  --a:#DE8DB7; --a-soft:#381B29; --r:#AFC95B; --r-soft:#242D12;
+  --ok:#7FC791; --ok-soft:#17301E; --warn:#DFAA55; --warn-soft:#332714; --bad:#E68C82; --bad-soft:#3A1C19;
+  --pv:#E2B57E; --pv-soft:#33250F;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -18px rgba(0,0,0,.8);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0E1413; --surface:#171F1E; --surface-2:#1D2625; --surface-3:#24302E;
+  --line:#2A3433; --line-strong:#3D4A48;
+  --ink:#E7EDEB; --ink-2:#AEBAB7; --ink-3:#808D8A;
+  --s:#4CC6B7; --s-soft:#10322E; --o:#93A7EA; --o-soft:#1A2240;
+  --a:#DE8DB7; --a-soft:#381B29; --r:#AFC95B; --r-soft:#242D12;
+  --ok:#7FC791; --ok-soft:#17301E; --warn:#DFAA55; --warn-soft:#332714; --bad:#E68C82; --bad-soft:#3A1C19;
+  --pv:#E2B57E; --pv-soft:#33250F;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -18px rgba(0,0,0,.8);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.62;-webkit-text-size-adjust:100%}
+h1,h2,h3{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0;line-height:1.35}
+button,input,textarea{font:inherit;color:inherit}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1240px;margin:0 auto;padding:11px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0;flex-wrap:wrap}
+.brand h1{font-size:18px;letter-spacing:-.01em}
+.brand .sub{font-size:11.5px;font-weight:600;color:var(--o);background:var(--o-soft);padding:2px 8px;border-radius:999px}
+.mark{display:flex;gap:3px;font-family:var(--mono);font-size:11px;font-weight:600;flex:none}
+.mark i{display:grid;place-items:center;width:19px;height:19px;border-radius:4px;font-style:normal}
+.mark i:nth-child(1){background:var(--s-soft);color:var(--s)}
+.mark i:nth-child(2){background:var(--o-soft);color:var(--o)}
+.mark i:nth-child(3){background:var(--a-soft);color:var(--a)}
+.mark i:nth-child(4){background:var(--r-soft);color:var(--r)}
+.btn{background:var(--surface);border:1px solid var(--line-strong);border-radius:7px;padding:6px 12px;font-size:13.5px;font-weight:500;cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--surface-2);border-color:var(--ink-3)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.primary:hover{background:var(--ink-2);border-color:var(--ink-2)}
+.btn.ghost{background:transparent;border-color:var(--line)}
+.btn.sm{padding:3px 9px;font-size:12.5px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--o);outline-offset:2px}
+.tools{display:flex;gap:7px;flex-wrap:wrap}
+
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px 56px}
+.viewtabs{display:none;gap:6px;background:var(--surface-3);padding:4px;border-radius:9px;margin-top:14px}
+.viewtabs button{flex:1;border:0;background:transparent;border-radius:6px;padding:7px;font-weight:600;font-size:14px;cursor:pointer;color:var(--ink-2)}
+.viewtabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.grid{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);gap:20px;align-items:start;padding-block:20px}
+@media (max-width:980px){
+  .grid{grid-template-columns:minmax(0,1fr)}
+  .viewtabs{display:flex}
+  .pane[data-off="1"]{display:none}
+}
+.pane{min-width:0}
+
+.box{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+.box>h2{display:flex;align-items:center;gap:9px;font-size:15px;padding:11px 13px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.box>h2 .n{font-family:var(--mono);font-size:11.5px;font-weight:600;width:21px;height:21px;border-radius:5px;display:grid;place-items:center;flex:none}
+.box>h2 .cnt{margin-left:auto;font-family:var(--mono);font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--surface-3);color:var(--ink-2)}
+.box .in{padding:12px 13px}
+.box.S>h2 .n{background:var(--s-soft);color:var(--s)} .box.S{border-left:3px solid var(--s)}
+.box.O>h2 .n{background:var(--o-soft);color:var(--o)} .box.O{border-left:3px solid var(--o)}
+.box.A>h2 .n{background:var(--a-soft);color:var(--a)} .box.A{border-left:3px solid var(--a)}
+.box.R>h2 .n{background:var(--r-soft);color:var(--r)} .box.R{border-left:3px solid var(--r)}
+.box small{font-family:var(--body);font-weight:400;font-size:12.5px;color:var(--ink-3)}
+textarea{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-size:14.5px;line-height:1.75;resize:vertical;min-height:96px}
+textarea:hover{border-color:var(--line-strong)}
+textarea::placeholder{color:var(--ink-3)}
+textarea.short{min-height:64px}
+.ctx{display:flex;gap:10px;flex-wrap:wrap}
+.ctx label{flex:1 1 130px;min-width:0}
+.ctx label.full{flex-basis:100%}
+.lbl{font-size:11.5px;font-weight:600;letter-spacing:.04em;color:var(--ink-3);display:block;margin-bottom:3px}
+.ctx input{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:6px 9px;font-size:14px}
+.tip{font-size:12.5px;color:var(--ink-3);margin:0 0 9px;line-height:1.5}
+
+/* step cards */
+.step{background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+.step-h{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:13px 16px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.step-h .no{font-family:var(--mono);font-size:12px;font-weight:600;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--bg);flex:none}
+.step-h h2{font-size:16.5px}
+.step-h .desc{font-size:12.5px;color:var(--ink-3);line-height:1.45}
+.step-h .grow{flex:1 1 200px;min-width:0}
+.step-h .acts{display:flex;gap:7px;flex-wrap:wrap}
+.step-b{padding:0}
+.status{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 16px;font-size:13.5px;border-bottom:1px solid var(--line);background:var(--o-soft);color:var(--ink)}
+.status.err{background:var(--bad-soft)}
+.status.info{background:var(--surface-3);color:var(--ink-2)}
+.status .grow{flex:1 1 auto;min-width:0}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid var(--o);border-right-color:transparent;animation:sp .8s linear infinite;flex:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+.banner{padding:9px 16px;font-size:13px;background:var(--warn-soft);color:var(--ink);border-bottom:1px solid var(--line);line-height:1.5}
+.banner b{color:var(--warn)}
+.extra{padding:13px 16px;border-bottom:1px solid var(--line)}
+
+.sec{padding:15px 16px;border-top:1px solid var(--line)}
+.sec:first-child{border-top:0}
+.sec>h3{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--ink-3);font-family:var(--body);margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sec>h3 em{font-style:normal;font-family:var(--mono);font-size:10.5px;padding:2px 6px;border-radius:4px;letter-spacing:0;background:var(--surface-3);color:var(--ink-2)}
+.lead{font-size:15px;line-height:1.7;margin:0}
+.pill{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap;line-height:1.6}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.info{background:var(--surface-3);color:var(--ink-2)}
+.tag{font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 5px;border-radius:4px;margin-right:3px;vertical-align:1.5px;white-space:nowrap;display:inline-block;line-height:1.4}
+.tag.s{background:var(--s-soft);color:var(--s)} .tag.o{background:var(--o-soft);color:var(--o)}
+.tag.a{background:var(--a-soft);color:var(--a)} .tag.r{background:var(--r-soft);color:var(--r)}
+.tag.p{background:var(--ink);color:var(--bg)} .tag.g{background:var(--surface-3);color:var(--ink-2)}
+.tag.pv{background:var(--pv-soft);color:var(--pv)}
+.box.P{border-left:3px solid var(--pv)}
+.box.P>h2 .n{background:var(--pv-soft);color:var(--pv);width:auto;padding:0 6px}
+.box.P textarea{min-height:260px;font-size:13px;line-height:1.65}
+.prov-sum{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 9px}
+.prow{display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 10px;padding:9px 0;border-top:1px dashed var(--line)}
+.prow:first-of-type{border-top:0}
+.prow .t{display:flex;gap:8px;align-items:baseline;justify-content:space-between;flex-wrap:wrap;font-size:14px}
+.prow .c{grid-column:2;font-size:13px;color:var(--ink-2);line-height:1.55}
+.tally{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+
+/* item check */
+.grp{font-size:12.5px;font-weight:600;color:var(--ink-2);margin:12px 0 4px}
+.grp:first-child{margin-top:0}
+.item{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;padding:9px 0;border-top:1px dashed var(--line)}
+.item:first-of-type{border-top:0}
+.item .t{font-size:14.5px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;justify-content:space-between}
+.item .c{grid-column:2;font-size:13px;color:var(--ink-2);line-height:1.55}
+.sugg{grid-column:2;display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13.5px;margin-top:2px}
+.sugg .st{flex:1 1 200px;min-width:0}
+.sugg .st span{font-size:11px;font-weight:600;color:var(--ink-3);display:block}
+
+.themes{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.theme{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface-2);min-width:0}
+.theme h4{margin:0 0 5px;font-size:14.5px;font-family:var(--display);font-weight:700}
+.theme p{margin:6px 0 0;font-size:13px;color:var(--ink-2);line-height:1.55}
+
+.pair{padding:9px 0;border-top:1px dashed var(--line)}
+.pair:first-child{border-top:0}
+.pair .h{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:13.5px}
+.pair .x{color:var(--ink-3);font-family:var(--mono);font-size:12px}
+.pair .rs{font-size:13px;color:var(--ink-2);margin-top:3px;line-height:1.55}
+.pair .src{font-size:12.5px;color:var(--ink-3);margin-top:2px}
+
+.obs{display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-top:1px dashed var(--line);font-size:13.5px;line-height:1.55}
+.obs:first-child{border-top:0}
+.obs .ic{flex:none;width:19px;height:19px;border-radius:5px;display:grid;place-items:center;font-size:11px;font-weight:700;margin-top:2px;font-family:var(--mono)}
+.obs.ok .ic{background:var(--ok-soft);color:var(--ok)}
+.obs.no .ic{background:var(--warn-soft);color:var(--warn)}
+.obs.q .ic{background:var(--o-soft);color:var(--o)}
+.obs>div{min-width:0}
+
+/* plan doc */
+.doc-h{padding:15px 16px 13px;border-bottom:1px solid var(--line)}
+.doc-h .eye{font-size:11.5px;font-weight:600;letter-spacing:.1em;color:var(--ink-3)}
+.doc-h h2{font-size:18px;margin-top:3px}
+.doc-h .mt{font-size:12.5px;color:var(--ink-3);margin-top:3px;font-variant-numeric:tabular-nums}
+.vision{font-family:var(--display);font-size:20px;line-height:1.55;letter-spacing:-.01em;margin:0}
+@media (max-width:560px){.vision{font-size:17.5px}}
+.why{font-size:12.5px;color:var(--ink-3);margin:6px 0 0;line-height:1.5}
+.why b{font-weight:600;color:var(--ink-2)}
+ol.p{list-style:none;counter-reset:p;margin:0;padding:0}
+ol.p>li{counter-increment:p;position:relative;padding:8px 0 8px 31px;border-top:1px dashed var(--line);font-size:14.5px;line-height:1.6}
+ol.p>li:first-child{border-top:0}
+ol.p>li::before{content:counter(p);position:absolute;left:0;top:10px;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ink-3);background:var(--surface-3);width:21px;height:21px;border-radius:5px;display:grid;place-items:center}
+.refs{display:inline}
+.strat-t{font-weight:600}
+.proj{margin:5px 0 0;padding-left:18px;font-size:13.5px;color:var(--ink-2)}
+.proj li{margin:2px 0}
+.gt{font-size:13px;font-weight:600;color:var(--ink-2);margin:12px 0 5px}
+.gt:first-child{margin-top:0}
+.kpi{display:flex;gap:10px;justify-content:space-between;align-items:baseline;flex-wrap:wrap;border-left:3px solid var(--r);background:var(--r-soft);border-radius:0 8px 8px 0;padding:7px 11px;margin-bottom:7px;font-size:14px}
+.kpi .tg{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--r);white-space:nowrap}
+.twrap{overflow-x:auto;margin:0 -16px;padding:0 16px}
+table.al{border-collapse:collapse;width:100%;min-width:560px;font-size:13px}
+table.al th,table.al td{text-align:left;vertical-align:top;padding:7px 9px;border-bottom:1px solid var(--line);line-height:1.5}
+table.al th{font-size:11px;letter-spacing:.05em;color:var(--ink-3);font-weight:600;background:var(--surface-2);border-bottom:1px solid var(--line-strong)}
+table.al tr:last-child td{border-bottom:0}
+.miss{color:var(--bad);font-size:12.5px;font-style:italic}
+.note{font-size:13px;color:var(--ink-2);background:var(--warn-soft);border-left:3px solid var(--warn);border-radius:0 7px 7px 0;padding:9px 11px;line-height:1.55}
+.note ul{margin:4px 0 0;padding-left:18px}
+.empty{font-size:13.5px;color:var(--ink-3);padding:18px 16px;line-height:1.6}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);transform:translate(-50%,16px);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:13.5px;font-weight:500;opacity:0;pointer-events:none;transition:.2s;z-index:60;max-width:calc(100% - 32px);text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+footer{max-width:1240px;margin:0 auto;padding:6px 16px 0;font-size:12px;color:var(--ink-3);line-height:1.6}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"><i>S</i><i>O</i><i>A</i><i>R</i></div>
+      <h1>SOAR ฉบับกรอกเร็ว</h1>
+      <span class="sub">วิเคราะห์ด้วย AI</span>
+    </div>
+    <div class="tools">
+      <button class="btn ghost" data-act="demo" id="b-demo">ตัวอย่าง</button>
+      <button class="btn ghost" data-act="clear" id="b-clear">ล้าง</button>
+      <button class="btn primary" data-act="copy" id="b-copy">คัดลอกแผน</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="viewtabs" role="tablist">
+    <button role="tab" aria-selected="true" data-view="inp" id="vt-inp">กรอก SOAR</button>
+    <button role="tab" aria-selected="false" data-view="out" id="vt-out">วิเคราะห์ &amp; แผน</button>
+  </div>
+  <div class="grid">
+    <div class="pane inp" id="inp">
+
+      <div class="box">
+        <div class="in">
+          <div class="ctx">
+            <label><span class="lbl">ชื่อสถานศึกษา</span><input type="text" id="f-school" placeholder="โรงเรียน..."></label>
+            <label style="flex:0 1 120px"><span class="lbl">ปีเป้าหมาย (พ.ศ.)</span><input type="text" id="f-year" placeholder="2572"></label>
+            <label class="full"><span class="lbl">บริบทสถานศึกษา (ไม่บังคับ)</span><textarea id="f-ctx" class="short" placeholder="ขนาดโรงเรียน จำนวนนักเรียน สภาพชุมชน ปัญหาที่เห็นชัด — ยิ่งละเอียด AI ยิ่งวิเคราะห์ได้ตรง"></textarea></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="box S">
+        <h2><span class="n">S</span>จุดแข็ง <small>Strengths</small><span class="cnt" id="c-s">0 ข้อ</span></h2>
+        <div class="in">
+          <p class="tip">บรรทัดละหนึ่งข้อ — สิ่งที่โรงเรียนมีหรือทำได้ดีอยู่แล้ว (ปัจจัยภายใน)</p>
+          <textarea id="ta-s" placeholder="ครูมีทักษะ Active Learning&#10;มีเครือข่ายศิษย์เก่า"></textarea>
+        </div>
+      </div>
+
+      <div class="box O">
+        <h2><span class="n">O</span>โอกาส <small>Opportunities</small><span class="cnt" id="c-o">0 ข้อ</span></h2>
+        <div class="in">
+          <p class="tip">บรรทัดละหนึ่งข้อ — สิ่งที่สภาพแวดล้อมภายนอกเปิดให้</p>
+          <textarea id="ta-o" placeholder="นโยบายหลักสูตรฐานสมรรถนะ&#10;มหาวิทยาลัยในพื้นที่พร้อมเป็นภาคี"></textarea>
+        </div>
+      </div>
+
+      <div class="box A">
+        <h2><span class="n">A</span>ภาพฝัน <small>Aspirations</small><span class="cnt" id="c-a">0 ข้อ</span></h2>
+        <div class="in">
+          <p class="tip">บรรทัดละหนึ่งท่อน — อยากเห็นผู้เรียนและโรงเรียนเป็นอย่างไร</p>
+          <textarea id="ta-a" placeholder="ผู้เรียนมีสมรรถนะการคิดขั้นสูง&#10;รักษ์ถิ่น"></textarea>
+        </div>
+      </div>
+
+      <div class="box R">
+        <h2><span class="n">R</span>ผลลัพธ์ที่วัดได้ <small>Results</small><span class="cnt" id="c-r">0 ข้อ</span></h2>
+        <div class="in">
+          <p class="tip">บรรทัดละหนึ่งตัวชี้วัด พร้อมค่าเป้าหมายถ้ามี</p>
+          <textarea id="ta-r" placeholder="ผู้เรียนผ่านเกณฑ์สมรรถนะ ≥ 80%"></textarea>
+        </div>
+      </div>
+
+      <div class="box P">
+        <h2><span class="n">จว.</span>แผนที่ต้องสอดคล้อง <small id="prov-name">TSQM จังหวัดพิษณุโลก</small><span class="cnt" id="c-p">0 หัวข้อ</span></h2>
+        <div class="in">
+          <p class="tip">AI จะตรวจว่า SOAR และแผนของโรงเรียนรองรับแผนนี้ครบทุกหัวข้อหรือไม่ เปลี่ยนเป็นแผนอื่นได้ โดยใส่รหัสในวงเล็บเหลี่ยมหน้าหัวข้อ เช่น [E1]</p>
+          <div class="prov-sum" id="prov-sum"></div>
+          <textarea id="ta-prov" spellcheck="false"></textarea>
+          <div style="margin-top:8px"><button class="btn sm ghost" data-act="prov-reset" id="b-prov">คืนค่าแผน TSQM พิษณุโลก</button></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="pane out" id="out" data-off="1">
+
+      <section class="step" id="st1">
+        <div class="step-h">
+          <span class="no">1</span>
+          <div class="grow">
+            <h2>วิเคราะห์ SOAR</h2>
+            <div class="desc">AI ตรวจทีละข้อว่าอยู่ถูกช่องและชัดพอไหม เทียบกับแผนจังหวัด จับคู่จุดแข็งกับโอกาส และหาช่องว่างกับความเสี่ยง</div>
+          </div>
+          <div class="acts"><button class="btn primary" id="go-an" data-act="an">วิเคราะห์ด้วย AI</button></div>
+        </div>
+        <div id="an-status" class="status info" hidden></div>
+        <div id="an-stale" class="banner" hidden><b>ข้อมูล SOAR เปลี่ยนหลังการวิเคราะห์</b> — กด “วิเคราะห์ใหม่” เพื่อให้ผลตรงกับข้อมูลล่าสุด</div>
+        <div class="step-b" id="an-body"></div>
+      </section>
+
+      <section class="step" id="st2">
+        <div class="step-h">
+          <span class="no">2</span>
+          <div class="grow">
+            <h2>สร้างแผนกลยุทธ์</h2>
+            <div class="desc">AI เขียนวิสัยทัศน์ พันธกิจ เป้าประสงค์ กลยุทธ์ และตัวชี้วัด จากผลวิเคราะห์ในขั้นที่ 1 โดยอ้างรหัสแผนจังหวัดทุกจุด</div>
+          </div>
+          <div class="acts"><button class="btn primary" id="go-plan" data-act="plan" disabled>สร้างแผนกลยุทธ์</button></div>
+        </div>
+        <div class="extra">
+          <label for="ta-extra" class="lbl">ข้อมูลเพิ่มเติม / คำตอบต่อคำถามของ AI (ไม่บังคับ)</label>
+          <textarea id="ta-extra" class="short" placeholder="เช่น ครูที่สอน Active Learning ได้มี 18 จาก 40 คน, ผู้เรียนมีอุปกรณ์ดิจิทัลที่บ้านประมาณ 60%"></textarea>
+        </div>
+        <div id="plan-status" class="status info" hidden></div>
+        <div id="plan-stale" class="banner" hidden><b>ข้อมูลหรือผลวิเคราะห์เปลี่ยนหลังสร้างแผน</b> — กด “สร้างแผนใหม่” เพื่อปรับแผนให้ตรงกัน</div>
+        <div class="step-b" id="plan-body"></div>
+      </section>
+
+    </div>
+  </div>
+  <footer>
+    การวิเคราะห์และแผนเขียนโดย AI ผลที่ได้เป็น <b>ร่าง</b> ควรตรวจกับข้อมูลจริงของสถานศึกษาก่อนใช้ ข้อมูลที่กรอกบันทึกไว้ในเบราว์เซอร์เครื่องนี้เท่านั้น
+  </footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+var LS="soar-ai-v2", LS1="soar-quick-v1";
+var F={school:"f-school",year:"f-year",ctx:"f-ctx",s:"ta-s",o:"ta-o",a:"ta-a",r:"ta-r",extra:"ta-extra",prov:"ta-prov"};
+var PROV_TSQM=[
+"แผน TSQM จังหวัดพิษณุโลก · เป้าประสงค์ระยะปีที่ 2–3",
+"",
+"[PV] วิสัยทัศน์จังหวัด — “ภายในปีการศึกษา 2570 จังหวัดพิษณุโลกจัดการศึกษาที่ยืดหยุ่นและมุ่งสร้างโอกาสและความเสมอภาคทางการศึกษา โดยคำนึงถึงศักยภาพผู้เรียนเป็นตัวตั้ง (Child-based Education) ในสภาพแวดล้อมที่ปลอดภัยทั้งกายและใจ รู้จักและเห็นคุณค่าตนเอง เข้าอกเข้าใจผู้อื่น มีเป้าหมายชีวิตและนำตนเองได้ สามารถเรียนรู้ ปรับตัวอย่างสมดุลระหว่างวัฒนธรรมท้องถิ่น จริยธรรม และโลกวิถีใหม่ โดยการรวมพลังของผู้บริหารที่เป็นผู้นำการเปลี่ยนแปลงและมีภาวะผู้นำทางวิชาการ ครูแกนนำเป็นครูมืออาชีพและพัฒนาตนเองอย่างต่อเนื่อง ตลอดจนได้รับการสนับสนุนทางวิชาการจากต้นสังกัดร่วมกับสถาบันอุดมศึกษาและภาคีเครือข่ายเชิงพื้นที่ทุกภาคส่วน”",
+"[G1] กลไกจังหวัดและ Co-ownership — เป้าประสงค์ระดับจังหวัด (เอกสารยังไม่ระบุรายละเอียด)",
+"[E1] ผู้บริหาร: ผู้นำการเปลี่ยนแปลงและภาวะผู้นำทางวิชาการ — (1) เข้าใจหลักสูตรขั้นพื้นฐาน หลักสูตรท้องถิ่น และหลักสูตรฐานสมรรถนะ (2) เข้าใจการเรียนรู้เชิงรุก AL, PBL, CBL (3) ใช้นวัตกรรมและเทคโนโลยีในการบริหาร (4) นิเทศการสอนในชั้นเรียน เป็นโค้ชและ Facilitator (5) ส่งเสริมระบบประกันคุณภาพของสถานศึกษา",
+"[E2] ผู้บริหาร: ยืดหยุ่น ยุติธรรม ส่งเสริมวัฒนธรรมองค์กรที่เอื้อต่อการพัฒนา — (1) บริหารแบบยืดหยุ่น บูรณาการ เชิงระบบ บนฐานความยุติธรรมและจริยธรรม (2) ฟังและตั้งคำถามได้ดีในกระบวนการ PLC (3) สร้างเครือข่าย PLC (4) รู้จักครูรายบุคคลและสร้างแรงบันดาลใจ (5) สร้างระบบนิเวศการเรียนรู้เชิงบวก (6) สร้างวัฒนธรรมองค์กรที่เปิดกว้าง",
+"[E3] ผู้บริหาร: สนับสนุนการพัฒนาครูและบุคลากร — (1) จัดหาสื่อ นวัตกรรม เทคโนโลยีสารสนเทศ (2) ใช้ PLC พัฒนาครูต่อเนื่อง (3) สร้างเครือข่ายความร่วมมือภายในและภายนอก (4) พัฒนาครูตามความต้องการจำเป็น (Need-based) ของแต่ละบุคคลและบริบทโรงเรียน",
+"[T0] ครูแกนนำ: สัดส่วน — มีจำนวนครูแกนนำอย่างน้อยร้อยละ 20",
+"[T1] ครูแกนนำ: ความเป็นมืออาชีพในการจัดการเรียนการสอน — (1) วิเคราะห์หลักสูตร 2551 หลักสูตรท้องถิ่น และหลักสูตรฐานสมรรถนะ (2) ออกแบบหน่วยและจัดการเรียนรู้เชิงรุก พร้อมการวัดผลที่สอดคล้องกับผลลัพธ์ (3) บริหารชั้นเรียนด้วยจิตวิทยาเชิงบวก มีเครื่องมือวัดผลที่มีประสิทธิภาพ (4) มีผลงานหรือนวัตกรรมระดับ Best Practice (5) เป็นโค้ชและวิทยากร (Coach & Trainer) ให้เพื่อนครู (6) ประยุกต์ใช้เทคโนโลยีและนวัตกรรมในการสอน",
+"[T2] ครูแกนนำ: พัฒนาตนเองและผู้เรียนอย่างต่อเนื่อง — (1) เข้าใจความแตกต่างรายบุคคล มุ่งพัฒนาผู้เรียนให้บรรลุสมรรถนะ (2) พัฒนาตนเองและเพื่อนครู แล้วนำผลมาต่อยอดในชั้นเรียน (3) ใช้เทคโนโลยีแสวงหาความรู้และพัฒนาการสอน (4) มีส่วนร่วมใน PLC, SLC, PLN อย่างต่อเนื่อง (5) สื่อสารและสร้างความร่วมมือกับผู้เรียน ผู้ปกครอง และชุมชน",
+"[LV] ผู้เรียน ด้านค่านิยม (V): จริยธรรมและคุณลักษณะอันพึงประสงค์ — ซื่อสัตย์ ไม่ลอกงาน มีน้ำใจและจิตอาสา ตรงต่อเวลา ตั้งใจเรียน เคารพความแตกต่าง ไม่ล้อเลียนกลั่นแกล้ง รับฟังผู้อื่นก่อนตัดสินใจ และคุณลักษณะอันพึงประสงค์ 8 ประการ",
+"[LA1] ผู้เรียน ด้านคุณลักษณะ (A): EF, Self-esteem, Self-control — ตั้งเป้าหมายและวางขั้นตอนงานเป็นระบบ ใฝ่รู้และกำกับตนเอง ปรับวิธีเมื่อเจออุปสรรค รู้จุดแข็งของตนและพัฒนาต่อเนื่อง มีวินัย และมีเป้าหมายชีวิตที่เหมาะกับวัย",
+"[LA2] ผู้เรียน ด้านคุณลักษณะ (A): สุขภาวะกายและใจ จัดการตนเองและอารมณ์ได้ — สุขอนามัย การกิน ออกกำลังกาย พักผ่อน แสดงอารมณ์เหมาะสม จัดการอารมณ์เชิงลบ และส่งเสริมสุขภาวะผู้อื่น",
+"[LS] ผู้เรียน ด้านทักษะ (S): ทักษะชีวิตและการทำงานร่วมกับผู้อื่น — รับผิดชอบตนเอง ตัดสินใจเหมาะสม สื่อสารเชิงบวกและรับฟัง ทำงานเป็นทีมตามบทบาท",
+"[LK] ผู้เรียน ด้านความรู้ (K): คะแนนเป้าหมาย — RT ป.1 75.00 (กลุ่ม รร.TSQM-A ปี 2568 ได้ 78.72) | NT ป.3 70.00 (ปี 2568 ได้ 57.81) | O-NET ป.6 รวม 50.00 (ปี 2568 ได้ 51.95) | O-NET ม.3 รวม 50.00 (ประถมศึกษา/ขยายโอกาส) | PISA (ยังไม่กำหนดค่าเป้าหมาย) | พัฒนาการเด็กปฐมวัยองค์รวม 90.00"
+].join("\n");
+function parseProv(t){
+  var out=[], seen={};
+  String(t||"").split(/\r?\n/).forEach(function(l){
+    var m=/^\s*\[([A-Za-z0-9.\-]{1,8})\]\s*(.+)$/.exec(l); if(!m) return;
+    var c=m[1].toUpperCase(); if(seen[c]) return; seen[c]=1;
+    var lab=m[2].split(" — ")[0].trim();
+    out.push({code:c,label:lab.length>90?lab.slice(0,88)+"…":lab});
+  });
+  return out;
+}
+function provMap(){ var m={}; parseProv(val("prov")).forEach(function(p){ m[p.code]=p.label }); return m }
+var LETTERS=["s","o","a","r"];
+var NAMES={s:"จุดแข็ง",o:"โอกาส",a:"ภาพฝัน",r:"ผลลัพธ์ที่วัดได้"};
+function el(id){ return document.getElementById(id) }
+function val(k){ return (el(F[k]).value||"") }
+function lines(k){ return val(k).split(/\r?\n/).map(function(x){return x.trim()}).filter(function(x){return x.length}) }
+function esc(x){ return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]}) }
+function arr(x){ return Array.isArray(x)?x:[] }
+function str(x){ return (x==null||typeof x==="object")?"":String(x).trim() }
+function toast(m){ var t=el("toast"); t.textContent=m; t.classList.add("on"); clearTimeout(toast._h); toast._h=setTimeout(function(){t.classList.remove("on")},2200) }
+
+var state={analysis:null,anKey:"",plan:null,planKey:"",demo:false};
+var sample=null, mode="", aiState="wait", busy=null, ctl=null, timer=null;
+
+function inputs(){
+  return {school:val("school").trim(),year:val("year").trim(),ctx:val("ctx").trim(),s:lines("s"),o:lines("o"),a:lines("a"),r:lines("r"),prov:val("prov").trim()};
+}
+function inputKey(){ return JSON.stringify(inputs()) }
+function planInputKey(){ return inputKey()+"|"+val("extra").trim()+"|"+(state.anKey||"")+"|"+JSON.stringify(state.analysis||null) }
+function codeMap(I){
+  var m={};
+  LETTERS.forEach(function(k){ I[k].forEach(function(x,i){ m[k.toUpperCase()+(i+1)]=x }) });
+  return m;
+}
+function chip(c){
+  c=String(c||"").toUpperCase(); var m=/^([SOAR])\d+$/.exec(c);
+  return '<span class="tag '+(m?m[1].toLowerCase():"g")+'">'+esc(c)+'</span>';
+}
+function pchip(c,lab){
+  return '<span class="tag pv"'+(lab?' title="'+esc(lab)+'"':'')+'>จว.'+esc(String(c||"").toUpperCase())+'</span>';
+}
+function pchips(list){ var M=provMap(); return arr(list).map(function(c){return pchip(c,M[c])}).join("") }
+
+/* ---------- prompts ---------- */
+function soarText(I){
+  var t=[];
+  t.push("ชื่อสถานศึกษา: "+(I.school||"(ไม่ระบุ)"));
+  t.push("ปีเป้าหมาย (พ.ศ.): "+(I.year||"(ไม่ระบุ)"));
+  t.push("บริบทสถานศึกษา: "+(I.ctx||"(ไม่ระบุ)"));
+  LETTERS.forEach(function(k){
+    t.push(""); t.push(k.toUpperCase()+" — "+NAMES[k]);
+    if(!I[k].length) t.push("(ไม่มีข้อมูล)");
+    I[k].forEach(function(x,i){ t.push(k.toUpperCase()+(i+1)+": "+x) });
+  });
+  return t.join("\n");
+}
+function anPrompt(I){
+  return [
+"คุณเป็นผู้เชี่ยวชาญการวางแผนกลยุทธ์สถานศึกษาของไทย (โรงเรียนมัธยมศึกษา สังกัด สพฐ.) และใช้กรอบ SOAR เป็นประจำ",
+"งาน: วิเคราะห์ข้อมูล SOAR ด้านล่างอย่างตรงไปตรงมาก่อนนำไปสร้างแผนกลยุทธ์ ห้ามคัดลอกข้อความเดิมมาเรียงใหม่ ให้ประเมินคุณภาพของแต่ละข้อและความเชื่อมโยงระหว่างข้อจริง ๆ",
+"",
+"เกณฑ์: S = ปัจจัยภายในที่โรงเรียนมีหรือควบคุมได้ | O = ปัจจัยภายนอกที่เอื้อ | A = ภาพอนาคตที่ต้องการ | R = ผลลัพธ์ที่วัดได้และควรมีค่าเป้าหมาย",
+"- ข้อที่ใส่ผิดช่อง (เช่น ปัจจัยภายนอกอยู่ในช่อง S) ให้ verdict = \"misplaced\" และระบุ move_to",
+"- ข้อที่กว้างหรือวัดไม่ได้ ให้ verdict = \"vague\"; ข้อที่ใช้ได้แต่ถ้อยคำควรปรับ ให้ verdict = \"reword\"; ข้อที่ดีแล้ว ให้ verdict = \"ok\" และ suggestion = \"\"",
+"- suggestion คือถ้อยคำใหม่ทั้งข้อที่ใช้แทนได้ทันที ห้ามแต่งตัวเลขหรือข้อเท็จจริงที่ไม่มีในข้อมูล ถ้าต้องมีตัวเลขให้เว้นเป็น ... ให้ผู้ใช้เติม",
+"- pairs คือคู่ S×O ที่ควรนำไปทำกลยุทธ์ ให้บอกว่าใช้จุดแข็งคว้าโอกาสอย่างไร ไม่ใช่แค่บอกว่าเกี่ยวกัน",
+"- risks คือจุดอ่อน (W) และอุปสรรค (T) ที่อนุมานได้อย่างสมเหตุสมผลจากข้อมูลและบริบทโรงเรียนไทย เพราะ SOAR ไม่มีช่องนี้",
+"- gaps คือความไม่สอดคล้อง เช่น ภาพฝันที่ไม่มีจุดแข็งหรือโอกาสรองรับ ภาพฝันที่ไม่มีตัวชี้วัด ตัวชี้วัดที่ไม่ตรงภาพฝันใด",
+(I.prov?
+"- แผนของโรงเรียนต้องสอดคล้องกับแผนระดับจังหวัดด้านล่าง ให้ตรวจ alignment ครบทุกรหัสในวงเล็บเหลี่ยมของแผนจังหวัด: status = covered (มีข้อ SOAR รองรับชัด) | partial (รองรับบางส่วน) | missing (ไม่มีเลย) | na (ไม่เกี่ยวกับระดับหรือประเภทของโรงเรียนนี้ เช่น ตัวชี้วัดชั้นประถมสำหรับโรงเรียนมัธยม หรือเป็นกลไกระดับจังหวัดล้วน); by = รหัส SOAR ที่รองรับ; note = สิ่งที่ขาดหรือควรเพิ่มใน SOAR ให้เฉพาะเจาะจง ถ้าข้อมูลไม่บอกระดับโรงเรียน ให้อนุมานจากชื่อและบริบท และบอกไว้ใน note"
+:"- ไม่มีแผนระดับจังหวัด ให้ align_summary = \"\" และ alignment = []"),
+"",
+"ตอบเป็น JSON object เดียวเท่านั้น ภาษาไทย กระชับ ตามโครงสร้างนี้:",
+'{"overview":"ภาพรวม 2-4 ประโยค: จุดเด่นของข้อมูล และสิ่งที่ต้องแก้ก่อนวางแผน",',
+' "readiness":"ready | revise | weak",',
+' "items":[{"code":"S1","verdict":"ok | reword | vague | misplaced","comment":"เหตุผล 1-2 ประโยค","suggestion":"","move_to":""}],',
+' "themes":[{"name":"ชื่อประเด็นยุทธศาสตร์","codes":["S1","O2","A1","R1"],"insight":"ข้อค้นพบของประเด็นนี้ 1-2 ประโยค"}],',
+' "pairs":[{"s":"S1","o":"O1","fit":"high | medium","reason":"ใช้จุดแข็งนี้คว้าโอกาสนี้อย่างไร"}],',
+' "gaps":["..."],',
+' "risks":[{"type":"W | T","text":"...","impact":"high | medium | low"}],',
+' "questions":["คำถามที่ผู้บริหารควรตอบก่อนวางแผน"],',
+' "align_summary":"สรุปความสอดคล้องกับแผนจังหวัด 2-3 ประโยค: ด้านที่สอดคล้อง และด้านที่ยังขาด",',
+' "alignment":[{"code":"E1","status":"covered | partial | missing | na","by":["S1"],"note":"..."}]}',
+"",
+"ข้อกำหนด: items ต้องครบทุกรหัสในข้อมูล | themes 2-4 | pairs 3-6 เรียงจากเหมาะที่สุด ใช้เฉพาะรหัสที่มีจริง | gaps 1-5 | risks 2-5 | questions 2-4"+(I.prov?" | alignment ครบทุกรหัสของแผนจังหวัด":""),
+"",
+"ข้อมูล SOAR:",
+soarText(I),
+"",
+"แผนระดับจังหวัดที่ต้องสอดคล้อง:",
+(I.prov||"(ไม่มี)")
+  ].join("\n");
+}
+function planPrompt(I,A,extra){
+  var an={overview:A.overview,items:A.items.map(function(x){return {code:x.code,verdict:x.verdict,comment:x.comment,suggestion:x.suggestion,move_to:x.move_to}}),
+          themes:A.themes,pairs:A.pairs.map(function(p){return {s:p.s,o:p.o,fit:p.fit,reason:p.reason}}),gaps:A.gaps,risks:A.risks,questions:A.questions,
+          align_summary:A.align_summary||"",alignment:arr(A.alignment).map(function(x){return {code:x.code,status:x.status,by:x.by,note:x.note}})};
+  return [
+"คุณเป็นผู้เชี่ยวชาญการวางแผนกลยุทธ์สถานศึกษาของไทย (โรงเรียนมัธยมศึกษา สังกัด สพฐ.)",
+"งาน: เขียนแผนกลยุทธ์จากข้อมูล SOAR โดยยึดผลการวิเคราะห์ที่ให้มา ใช้ภาษาราชการที่กระชับ อ่านเข้าใจง่าย",
+"",
+"หลักการ:",
+"- ข้อที่ผลวิเคราะห์บอกว่า misplaced ให้ถือตามช่องที่ถูกต้อง ข้อที่มี suggestion ให้ใช้ความหมายตาม suggestion",
+"- วิสัยทัศน์ 1 ประโยค มีกรอบเวลา (ปีเป้าหมาย) และครอบคลุมภาพฝันทุกท่อน ห้ามแค่เอาข้อความในช่อง A มาต่อกัน",
+"- พันธกิจ 3-6 ข้อ ขึ้นต้นด้วยคำกริยา (พัฒนา ส่งเสริม สร้าง ยกระดับ ฯลฯ) บอกว่าโรงเรียนจะทำอะไร",
+"- เป้าประสงค์ บอกผลที่เกิดกับใคร (ผู้เรียน ครู ผู้บริหาร สถานศึกษา) อย่างน้อย 1 ข้อต่อพันธกิจ อ้างเลขพันธกิจใน mission",
+"- กลยุทธ์ 3-7 ข้อ แต่ละข้อต้องมาจากคู่ S×O ที่มีจริง (อ้างรหัสใน pair) อ้างเลขเป้าประสงค์ที่รองรับใน goals มีเหตุผล และโครงการ/กิจกรรมหลัก 1-3 รายการ",
+"- ตัวชี้วัด ทุกเป้าประสงค์ต้องมีอย่างน้อย 1 ตัว วัดได้ และมีค่าเป้าหมาย ใช้ข้อในช่อง R ก่อน (source = รหัส R) ใช้ค่าเป้าหมายของแผนจังหวัดเมื่อเกี่ยวข้องกับระดับโรงเรียน (source = \"แผนจังหวัด\") ถ้าไม่พอให้เสนอใหม่ (source = \"ใหม่\")",
+(I.prov?
+"- ความสอดคล้องกับแผนจังหวัด: วิสัยทัศน์ต้องสะท้อนแนวคิดหลักของวิสัยทัศน์จังหวัดในภาษาของโรงเรียน (ไม่คัดลอกทั้งประโยค) | ทุกหัวข้อแผนจังหวัดที่ผลวิเคราะห์ระบุว่า missing หรือ partial (ยกเว้น na) ต้องมีกลยุทธ์และตัวชี้วัดรองรับ | ใส่รหัสแผนจังหวัดที่สอดคล้องใน prov ของพันธกิจ เป้าประสงค์ กลยุทธ์ และตัวชี้วัดทุกรายการ (ใช้รหัสในวงเล็บเหลี่ยม เช่น \"E1\" ไม่ต้องมีวงเล็บ) | ถ้าปีเป้าหมายของโรงเรียนต่างจากปีของจังหวัด ให้แนะนำใน advice"
+:"- ไม่มีแผนจังหวัด ให้ prov เป็น [] ทุกรายการ"),
+"- risks นำจุดอ่อน/อุปสรรคจากผลวิเคราะห์มาวางแนวทางรับมือ",
+"- advice คือสิ่งที่ผู้ใช้ควรตรวจหรือเติมก่อนนำแผนไปใช้ 1-4 ข้อ",
+"- ห้ามแต่งข้อเท็จจริงเกี่ยวกับโรงเรียนที่ไม่มีในข้อมูล",
+"",
+"ตอบเป็น JSON object เดียวเท่านั้น ตามโครงสร้างนี้:",
+'{"vision":"...","vision_why":"เหตุผลที่เขียนวิสัยทัศน์แบบนี้ 1-2 ประโยค",',
+' "missions":[{"text":"...","refs":["A1","S1","O1"],"prov":["T1"]}],',
+' "goals":[{"text":"...","mission":1,"prov":["T1"]}],',
+' "strategies":[{"title":"...","pair":["S1","O1"],"goals":[1],"prov":["T1","E3"],"why":"...","projects":["..."]}],',
+' "kpis":[{"goal":1,"text":"...","target":"...","source":"R1","prov":["LK"]}],',
+' "risks":[{"text":"...","response":"..."}],',
+' "advice":["..."]}',
+"",
+"ข้อมูล SOAR:",
+soarText(I),
+"",
+"แผนระดับจังหวัดที่ต้องสอดคล้อง:",
+(I.prov||"(ไม่มี)"),
+"",
+"ผลการวิเคราะห์ (JSON):",
+JSON.stringify(an),
+"",
+"ข้อมูลเพิ่มเติมจากผู้ใช้: "+(extra||"(ไม่มี)")
+  ].join("\n");
+}
+
+/* ---------- normalise AI output ---------- */
+function normAn(d,I){
+  if(!d||typeof d!=="object"||Array.isArray(d)) throw {code:"invalid_json"};
+  var map=codeMap(I), seen={};
+  var items=arr(d.items).map(function(x){
+    x=x||{}; var c=str(x.code).toUpperCase();
+    return {code:c,orig:map[c]||"",verdict:str(x.verdict).toLowerCase(),comment:str(x.comment),suggestion:str(x.suggestion),move_to:str(x.move_to).toUpperCase().charAt(0),applied:false};
+  }).filter(function(x){ if(!x.orig||seen[x.code]) return false; seen[x.code]=1; return true });
+  var out={
+    overview:str(d.overview),
+    readiness:str(d.readiness).toLowerCase(),
+    items:items,
+    themes:arr(d.themes).map(function(t){t=t||{};return {name:str(t.name),codes:arr(t.codes).map(function(c){return str(c).toUpperCase()}).filter(function(c){return map[c]}),insight:str(t.insight)}}).filter(function(t){return t.name}),
+    pairs:arr(d.pairs).map(function(p){p=p||{};var s=str(p.s).toUpperCase(),o=str(p.o).toUpperCase();return {s:s,o:o,st:map[s]||"",ot:map[o]||"",fit:str(p.fit).toLowerCase(),reason:str(p.reason)}}).filter(function(p){return p.st&&p.ot}),
+    gaps:arr(d.gaps).map(str).filter(Boolean),
+    risks:arr(d.risks).map(function(r){r=r||{};return {type:str(r.type).toUpperCase().charAt(0),text:str(r.text),impact:str(r.impact).toLowerCase()}}).filter(function(r){return r.text}),
+    questions:arr(d.questions).map(str).filter(Boolean),
+    align_summary:str(d.align_summary),
+    alignment:[]
+  };
+  var PM={}; parseProv(I.prov).forEach(function(p){ PM[p.code]=p.label });
+  var aseen={};
+  out.alignment=arr(d.alignment).map(function(x){
+    x=x||{}; var c=str(x.code).toUpperCase().replace(/^\[|\]$/g,"");
+    return {code:c,label:PM[c]||"",status:str(x.status).toLowerCase(),by:arr(x.by).map(function(b){return str(b).toUpperCase()}).filter(function(b){return map[b]}),note:str(x.note)};
+  }).filter(function(x){ if(!x.code||aseen[x.code]) return false; aseen[x.code]=1; return true });
+  if(!out.overview&&!out.items.length) throw {code:"invalid_json"};
+  return out;
+}
+function normPlan(d){
+  if(!d||typeof d!=="object"||Array.isArray(d)) throw {code:"invalid_json"};
+  function txt(m){ return typeof m==="string"?m.trim():str(m&&m.text) }
+  function pv(x){ var s={}; return arr(x&&x.prov).map(function(c){return str(c).toUpperCase().replace(/^\[|\]$/g,"").replace(/^จว\./,"")}).filter(function(c){ if(!c||s[c]) return false; s[c]=1; return true }) }
+  var out={
+    vision:str(d.vision), vision_why:str(d.vision_why),
+    missions:arr(d.missions).map(function(m){return {text:txt(m),refs:arr(m&&m.refs).map(function(c){return str(c).toUpperCase()}).filter(Boolean),prov:pv(m)}}).filter(function(m){return m.text}),
+    goals:arr(d.goals).map(function(g){return {text:txt(g),mission:Number(g&&g.mission)||0,prov:pv(g)}}).filter(function(g){return g.text}),
+    strategies:arr(d.strategies).map(function(s){s=s||{};return {title:str(s.title),pair:arr(s.pair).map(function(c){return str(c).toUpperCase()}).filter(Boolean),goals:arr(s.goals).map(Number).filter(function(n){return n>0}),prov:pv(s),why:str(s.why),projects:arr(s.projects).map(str).filter(Boolean)}}).filter(function(s){return s.title}),
+    kpis:arr(d.kpis).map(function(k){k=k||{};return {goal:Number(k.goal)||0,text:str(k.text),target:str(k.target),source:str(k.source),prov:pv(k)}}).filter(function(k){return k.text}),
+    risks:arr(d.risks).map(function(r){r=r||{};return {text:str(r.text),response:str(r.response)}}).filter(function(r){return r.text}),
+    advice:arr(d.advice).map(str).filter(Boolean)
+  };
+  if(!out.vision&&!out.strategies.length) throw {code:"invalid_json"};
+  return out;
+}
+
+/* ---------- render: analysis ---------- */
+var VERD={ok:["เหมาะสม","ok"],reword:["ปรับถ้อยคำ","warn"],vague:["กว้างเกินไป","warn"],misplaced:["อยู่ผิดช่อง","bad"]};
+var READY={ready:["พร้อมวางแผน","ok"],revise:["ควรปรับก่อนวางแผน","warn"],weak:["ข้อมูลยังไม่พอ","bad"]};
+var FIT={high:["เหมาะมาก","ok"],medium:["เหมาะปานกลาง","info"]};
+var IMP={high:["ผลกระทบสูง","bad"],medium:["ปานกลาง","warn"],low:["ต่ำ","info"]};
+var ALS={covered:["สอดคล้อง","ok"],partial:["รองรับบางส่วน","warn"],missing:["ยังไม่มี","bad"],na:["ไม่เกี่ยวข้อง","info"]};
+function pill(map,k){ var v=map[k]; return v?'<span class="pill '+v[1]+'">'+v[0]+'</span>':'' }
+
+function renderAn(){
+  var A=state.analysis, b=el("an-body");
+  if(!A){
+    b.innerHTML='<div class="empty">กรอกช่อง S, O และ A อย่างน้อยช่องละหนึ่งข้อ แล้วกด “วิเคราะห์ด้วย AI” ผลวิเคราะห์จะปรากฏที่นี่ ก่อนนำไปสร้างแผนในขั้นที่ 2</div>';
+    return;
+  }
+  var h="";
+  h+='<div class="sec"><h3>ภาพรวม '+pill(READY,A.readiness)+(state.demo?'<span class="pill info">ตัวอย่าง ยังไม่ได้ใช้ AI กับข้อมูลของคุณ</span>':'')+'</h3>';
+  h+='<p class="lead">'+esc(A.overview||"—")+'</p></div>';
+
+  var AL=arr(A.alignment);
+  if(AL.length){
+    var tl={covered:0,partial:0,missing:0,na:0};
+    AL.forEach(function(x){ if(tl[x.status]!=null) tl[x.status]++ });
+    h+='<div class="sec"><h3>ความสอดคล้องกับแผนจังหวัด</h3>';
+    h+='<div class="tally">'+["covered","partial","missing","na"].map(function(k){ return tl[k]?'<span class="pill '+ALS[k][1]+'">'+ALS[k][0]+' '+tl[k]+'</span>':'' }).join("")+'</div>';
+    if(A.align_summary) h+='<p class="lead" style="margin-bottom:8px">'+esc(A.align_summary)+'</p>';
+    var order={missing:0,partial:1,covered:2,na:3};
+    AL.slice().sort(function(a,b){ return (order[a.status]==null?4:order[a.status])-(order[b.status]==null?4:order[b.status]) }).forEach(function(x){
+      h+='<div class="prow">'+pchip(x.code,x.label)+'<div class="t"><span>'+esc(x.label||x.code)+(x.by.length?' <span class="refs">'+x.by.map(chip).join("")+'</span>':'')+'</span>'+pill(ALS,x.status)+'</div>';
+      if(x.note) h+='<div class="c">'+esc(x.note)+'</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+  }
+
+  if(A.items.length){
+    h+='<div class="sec"><h3>ตรวจรายข้อ <em>'+A.items.filter(function(x){return x.verdict!=="ok"}).length+' ข้อควรปรับ</em></h3>';
+    LETTERS.forEach(function(k){
+      var its=A.items.filter(function(x){return x.code.charAt(0).toLowerCase()===k});
+      if(!its.length) return;
+      h+='<p class="grp">'+k.toUpperCase()+' · '+NAMES[k]+'</p>';
+      its.forEach(function(x){
+        h+='<div class="item">'+chip(x.code)+'<div class="t"><span>'+esc(x.orig)+'</span>'+pill(VERD,x.verdict)+'</div>';
+        if(x.comment) h+='<div class="c">'+esc(x.comment)+'</div>';
+        var mv=(x.verdict==="misplaced"&&"SOAR".indexOf(x.move_to)>=0&&x.move_to&&x.move_to!==x.code.charAt(0));
+        if(x.suggestion||mv){
+          h+='<div class="sugg"><div class="st"><span>'+(mv?'ควรย้ายไปช่อง '+esc(x.move_to):'ถ้อยคำที่แนะนำ')+'</span>'+esc(x.suggestion||x.orig)+'</div>';
+          if(x.applied) h+='<span class="pill ok">ปรับแล้ว</span>';
+          else h+='<button class="btn sm" data-apply="'+esc(x.code)+'" data-mode="'+(mv?"move":"replace")+'">'+(mv?'ย้ายไปช่อง '+esc(x.move_to):'ใช้ถ้อยคำนี้')+'</button>';
+          h+='</div>';
+        }
+        h+='</div>';
+      });
+    });
+    h+='</div>';
+  }
+
+  if(A.themes.length){
+    h+='<div class="sec"><h3>ประเด็นยุทธศาสตร์ที่พบ</h3><div class="themes">';
+    A.themes.forEach(function(t){
+      h+='<div class="theme"><h4>'+esc(t.name)+'</h4><div>'+t.codes.map(chip).join("")+'</div><p>'+esc(t.insight)+'</p></div>';
+    });
+    h+='</div></div>';
+  }
+
+  if(A.pairs.length){
+    h+='<div class="sec"><h3>คู่ S × O ที่ควรนำไปทำกลยุทธ์</h3>';
+    A.pairs.forEach(function(p){
+      h+='<div class="pair"><div class="h">'+chip(p.s)+'<span class="x">×</span>'+chip(p.o)+pill(FIT,p.fit)+'</div>';
+      if(p.st&&p.ot) h+='<div class="src">'+esc(p.st)+' → '+esc(p.ot)+'</div>';
+      h+='<div class="rs">'+esc(p.reason)+'</div></div>';
+    });
+    h+='</div>';
+  }
+
+  if(A.gaps.length){
+    h+='<div class="sec"><h3>ช่องว่างและความไม่สอดคล้อง</h3>';
+    A.gaps.forEach(function(g){ h+='<div class="obs no"><span class="ic" aria-hidden="true">!</span><div>'+esc(g)+'</div></div>' });
+    h+='</div>';
+  }
+
+  if(A.risks.length){
+    h+='<div class="sec"><h3>จุดอ่อนและอุปสรรคที่ AI อนุมาน <em>W / T</em></h3>';
+    A.risks.forEach(function(r){
+      h+='<div class="obs no"><span class="ic" aria-hidden="true">'+esc(r.type==="W"?"W":"T")+'</span><div>'+esc(r.text)+' '+pill(IMP,r.impact)+'</div></div>';
+    });
+    h+='</div>';
+  }
+
+  if(A.questions.length){
+    h+='<div class="sec"><h3>คำถามก่อนวางแผน <em>ตอบได้ในช่องข้อมูลเพิ่มเติมของขั้นที่ 2</em></h3>';
+    A.questions.forEach(function(q){ h+='<div class="obs q"><span class="ic" aria-hidden="true">?</span><div>'+esc(q)+'</div></div>' });
+    h+='</div>';
+  }
+  b.innerHTML=h;
+}
+
+/* ---------- render: plan ---------- */
+function renderPlan(){
+  var P=state.plan, b=el("plan-body");
+  if(!P){
+    b.innerHTML='<div class="empty">'+(state.analysis?'ตรวจผลวิเคราะห์ ปรับข้อมูลตามคำแนะนำถ้าต้องการ แล้วกด “สร้างแผนกลยุทธ์”':'ทำขั้นที่ 1 ให้เสร็จก่อน ปุ่มสร้างแผนจะเปิดใช้งานเมื่อมีผลวิเคราะห์')+'</div>';
+    return;
+  }
+  var I=inputs(), h="";
+  h+='<div class="doc-h"><div class="eye">แผนกลยุทธ์สถานศึกษา'+(state.demo?' · ตัวอย่าง':'')+'</div>';
+  h+='<h2>'+esc(I.school||"(ยังไม่ระบุชื่อสถานศึกษา)")+'</h2>';
+  h+='<div class="mt">'+(I.year?"เป้าหมายปี พ.ศ. "+esc(I.year):"ยังไม่ระบุปีเป้าหมาย")+' · พันธกิจ '+P.missions.length+' · เป้าประสงค์ '+P.goals.length+' · กลยุทธ์ '+P.strategies.length+' · ตัวชี้วัด '+P.kpis.length+'</div></div>';
+
+  h+='<div class="sec"><h3>วิสัยทัศน์</h3><p class="vision">“'+esc(P.vision)+'”</p>';
+  if(P.vision_why) h+='<p class="why"><b>เหตุผล</b> '+esc(P.vision_why)+'</p>';
+  h+='</div>';
+
+  h+='<div class="sec"><h3>พันธกิจ</h3><ol class="p">';
+  P.missions.forEach(function(m){ h+='<li>'+esc(m.text)+' <span class="refs">'+m.refs.map(chip).join("")+pchips(m.prov)+'</span></li>' });
+  h+='</ol></div>';
+
+  h+='<div class="sec"><h3>เป้าประสงค์</h3><ol class="p">';
+  P.goals.forEach(function(g){ h+='<li>'+esc(g.text)+' <span class="refs">'+(g.mission?'<span class="tag g">พันธกิจ '+g.mission+'</span>':'')+pchips(g.prov)+'</span></li>' });
+  h+='</ol></div>';
+
+  h+='<div class="sec"><h3>กลยุทธ์</h3><ol class="p">';
+  P.strategies.forEach(function(s){
+    h+='<li><span class="strat-t">'+esc(s.title)+'</span> <span class="refs">'+s.pair.map(chip).join("")+s.goals.map(function(n){return '<span class="tag g">เป้าประสงค์ '+n+'</span>'}).join("")+pchips(s.prov)+'</span>';
+    if(s.why) h+='<p class="why">'+esc(s.why)+'</p>';
+    if(s.projects.length) h+='<ul class="proj">'+s.projects.map(function(p){return '<li>'+esc(p)+'</li>'}).join("")+'</ul>';
+    h+='</li>';
+  });
+  h+='</ol></div>';
+
+  h+='<div class="sec"><h3>ตัวชี้วัดความสำเร็จ</h3>';
+  P.goals.forEach(function(g,i){
+    var ks=P.kpis.filter(function(k){return k.goal===i+1}); if(!ks.length) return;
+    h+='<p class="gt">'+(i+1)+'. '+esc(g.text)+'</p>';
+    ks.forEach(function(k){
+      h+='<div class="kpi"><span>'+esc(k.text)+' '+(k.source?(/^R\d+$/i.test(k.source)?chip(k.source):'<span class="tag g">'+esc(k.source)+'</span>'):'')+pchips(k.prov)+'</span>'+(k.target?'<span class="tg">'+esc(k.target)+'</span>':'')+'</div>';
+    });
+  });
+  var lost=P.kpis.filter(function(k){return !(k.goal>=1&&k.goal<=P.goals.length)});
+  lost.forEach(function(k){ h+='<div class="kpi"><span>'+esc(k.text)+'</span><span class="tg">'+esc(k.target)+'</span></div>' });
+  h+='</div>';
+
+  h+='<div class="sec"><h3>ตารางสอบทานความสอดคล้อง</h3><div class="twrap"><table class="al">';
+  h+='<tr><th>เป้าประสงค์</th><th>พันธกิจ</th><th>กลยุทธ์</th><th>ตัวชี้วัด</th></tr>';
+  P.goals.forEach(function(g,i){
+    var ss=P.strategies.map(function(s,j){return s.goals.indexOf(i+1)>=0?j+1:0}).filter(Boolean);
+    var ks=P.kpis.filter(function(k){return k.goal===i+1});
+    h+='<tr><td>'+(i+1)+'. '+esc(g.text)+'</td><td>'+(g.mission?'พันธกิจ '+g.mission:'<span class="miss">ว่าง</span>')+'</td>';
+    h+='<td>'+(ss.length?ss.map(function(n){return '<span class="tag p">กลยุทธ์ '+n+'</span>'}).join(" "):'<span class="miss">ไม่มีกลยุทธ์รองรับ</span>')+'</td>';
+    h+='<td>'+(ks.length?ks.map(function(k){return esc(k.text)+(k.target?' ('+esc(k.target)+')':'')}).join("<br>"):'<span class="miss">ไม่มีตัวชี้วัด</span>')+'</td></tr>';
+  });
+  h+='</table></div></div>';
+
+  var PR=provRows(P);
+  if(PR.length){
+    h+='<div class="sec"><h3>ความสอดคล้องกับแผนจังหวัด <em>จังหวัด → โรงเรียน</em></h3>';
+    var miss=PR.filter(function(r){return r.status==="missing"||r.status==="partial"});
+    h+='<div class="tally">'+["covered","partial","missing","na"].map(function(k){ var n=PR.filter(function(r){return r.status===k}).length; return n?'<span class="pill '+ALS[k][1]+'">'+ALS[k][0]+' '+n+'</span>':'' }).join("")+'</div>';
+    h+='<div class="twrap"><table class="al"><tr><th>หัวข้อแผนจังหวัด</th><th>พันธกิจ / เป้าประสงค์</th><th>กลยุทธ์</th><th>ตัวชี้วัด</th><th>สถานะ</th></tr>';
+    PR.forEach(function(r){
+      h+='<tr><td>'+pchip(r.code)+' '+esc(r.label)+'</td>';
+      h+='<td>'+(r.m.length||r.g.length?r.m.map(function(n){return 'พ.'+n}).concat(r.g.map(function(n){return 'ป.'+n})).join(", "):'<span class="miss">—</span>')+'</td>';
+      h+='<td>'+(r.s.length?r.s.map(function(n){return '<span class="tag p">กลยุทธ์ '+n+'</span>'}).join(" "):'<span class="miss">—</span>')+'</td>';
+      h+='<td>'+(r.k.length?r.k.map(esc).join("<br>"):'<span class="miss">—</span>')+'</td>';
+      h+='<td>'+pill(ALS,r.status)+'</td></tr>';
+    });
+    h+='</table></div>';
+    if(miss.length) h+='<p class="why" style="margin-top:8px"><b>ยังรองรับไม่ครบ</b> '+miss.map(function(r){return "จว."+esc(r.code)}).join(", ")+' — สอดคล้องครบเมื่อมีทั้งกลยุทธ์และตัวชี้วัดรองรับ</p>';
+    h+='</div>';
+  }
+
+  if(P.risks.length){
+    h+='<div class="sec"><h3>ทะเบียนความเสี่ยง</h3><div class="twrap"><table class="al"><tr><th>ความเสี่ยง</th><th>แนวทางรับมือ</th></tr>';
+    P.risks.forEach(function(r){ h+='<tr><td>'+esc(r.text)+'</td><td>'+esc(r.response)+'</td></tr>' });
+    h+='</table></div></div>';
+  }
+  if(P.advice.length){
+    h+='<div class="sec"><div class="note"><b>ควรตรวจก่อนใช้</b><ul>'+P.advice.map(function(a){return '<li>'+esc(a)+'</li>'}).join("")+'</ul></div></div>';
+  }
+  b.innerHTML=h;
+}
+
+function provRows(P){
+  var na={}; if(state.analysis) arr(state.analysis.alignment).forEach(function(x){ if(x.status==="na") na[x.code]=1 });
+  function has(x,c){ return arr(x.prov).indexOf(c)>=0 }
+  return parseProv(val("prov")).map(function(p){
+    var c=p.code, r={code:c,label:p.label,m:[],g:[],s:[],k:[]};
+    P.missions.forEach(function(x,i){ if(has(x,c)) r.m.push(i+1) });
+    P.goals.forEach(function(x,i){ if(has(x,c)) r.g.push(i+1) });
+    P.strategies.forEach(function(x,i){ if(has(x,c)) r.s.push(i+1) });
+    P.kpis.forEach(function(x){ if(has(x,c)) r.k.push(x.text+(x.target?" ("+x.target+")":"")) });
+    var any=r.m.length||r.g.length||r.s.length||r.k.length;
+    r.status=(r.s.length&&r.k.length)?"covered":any?"partial":na[c]?"na":"missing";
+    return r;
+  });
+}
+
+/* ---------- UI state ---------- */
+function syncButtons(){
+  var off=(aiState!=="ok")||!!busy;
+  var ba=el("go-an"), bp=el("go-plan");
+  ba.textContent=(state.analysis&&!state.demo)?"วิเคราะห์ใหม่":"วิเคราะห์ด้วย AI";
+  bp.textContent=(state.plan&&!state.demo)?"สร้างแผนใหม่":"สร้างแผนกลยุทธ์";
+  ba.disabled=off;
+  bp.disabled=off||!state.analysis;
+}
+function updateStale(){
+  el("an-stale").hidden=!(state.analysis&&!state.demo&&state.anKey!==inputKey());
+  el("plan-stale").hidden=!(state.plan&&!state.demo&&state.planKey!==planInputKey());
+}
+function counts(){
+  LETTERS.forEach(function(k){ el("c-"+k).textContent=lines(k).length+" ข้อ" });
+  var P=parseProv(val("prov"));
+  el("c-p").textContent=P.length+" หัวข้อ";
+  var first=(val("prov").split(/\r?\n/).filter(function(x){return x.trim()})[0]||"").trim();
+  el("prov-name").textContent=!val("prov").trim()?"ยังไม่ได้ใส่แผน":(/^\[/.test(first)?"แผนที่ใส่ไว้":first.slice(0,60));
+  el("prov-sum").innerHTML=P.map(function(p){return pchip(p.code,p.label)}).join("");
+}
+function save(){
+  try{
+    localStorage.setItem(LS,JSON.stringify({school:val("school"),year:val("year"),ctx:val("ctx"),s:val("s"),o:val("o"),a:val("a"),r:val("r"),extra:val("extra"),prov:val("prov"),
+      analysis:state.analysis,anKey:state.anKey,plan:state.plan,planKey:state.planKey,demo:state.demo}));
+  }catch(e){}
+}
+function onInputs(){ counts(); updateStale(); save() }
+function setStatus(which,cls,html){
+  var s=el(which+"-status");
+  if(!html){ s.hidden=true; s.innerHTML=""; return }
+  s.className="status "+cls; s.innerHTML=html; s.hidden=false;
+}
+function aiNotice(){
+  if(aiState==="wait") setStatus("an","info",'<span class="spin" aria-hidden="true"></span><span class="grow">กำลังเชื่อมต่อ AI…</span>');
+  else if(aiState==="none") setStatus("an","err",'<span class="grow">เชื่อมต่อ AI ไม่ได้ ตอนนี้ดูผลที่บันทึกไว้ได้อย่างเดียว</span>');
+  else if(aiState==="nokey") setStatus("an","err",'<span class="grow">ผู้ดูแลเว็บยังไม่ได้ตั้งค่า GEMINI_API_KEY ใน Vercel ตอนนี้ดูผลที่บันทึกไว้ได้อย่างเดียว</span>');
+  else if(aiState==="denied") setStatus("an","err",'<span class="grow">หน้านี้ยังไม่ได้รับอนุญาตให้ใช้ Claude เปิดสิทธิ์ได้จากเมนู Permissions ของหน้านี้ แล้วโหลดหน้าใหม่</span>');
+  else setStatus("an");
+}
+
+var ERR={
+  rate_limited:"ใช้ AI ถี่เกินไปหรือถึงขีดจำกัดการใช้งาน รอสักครู่แล้วกดอีกครั้ง",
+  session_expired:"ต้องเข้าสู่ระบบ Claude ใหม่ แล้วกดอีกครั้ง",
+  invalid_json:"AI ตอบกลับในรูปแบบที่อ่านไม่ได้ กดอีกครั้งเพื่อให้เขียนใหม่",
+  empty_completion:"AI ไม่ได้ตอบกลับ ลองกดอีกครั้ง",
+  refused:"AI ไม่รับคำขอนี้ ลองปรับถ้อยคำในข้อมูลแล้วกดอีกครั้ง",
+  prompt_too_large:"ข้อมูลยาวเกินไป ลองย่อบริบทหรือลดจำนวนข้อ",
+  no_key:"ผู้ดูแลเว็บยังไม่ได้ตั้งค่า GEMINI_API_KEY",
+  forbidden:"คำขอถูกปฏิเสธ ลองโหลดหน้าใหม่"
+};
+async function serverJSON(prompt,signal){
+  var r, j=null;
+  try{ r=await fetch("/api/ai",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:prompt}),signal:signal}) }
+  catch(e){ throw {code:signal.aborted?"cancelled":"upstream_error"} }
+  try{ j=await r.json() }catch(e){}
+  if(!r.ok||!j||j.error||!("data" in j)) throw {code:(j&&j.error)||(r.status===429?"rate_limited":"upstream_error")};
+  return j.data;
+}
+var DENY=["not_granted","sampling_disabled","not_declared","capability_disabled","capability_removed"];
+
+async function callAI(which,prompt){
+  if(aiState!=="ok"||busy) return null;
+  busy=which; ctl=new AbortController();
+  var t0=Date.now(), chars=0;
+  var label=which==="an"?"AI กำลังวิเคราะห์ SOAR":"AI กำลังเขียนแผนกลยุทธ์";
+  function tick(){
+    var sec=Math.round((Date.now()-t0)/1000);
+    setStatus(which,"",'<span class="spin" aria-hidden="true"></span><span class="grow">'+label+' · '+(chars?'เขียนแล้ว '+chars.toLocaleString("th-TH")+' ตัวอักษร':'กำลังคิด')+' · '+sec+' วินาที</span><button class="btn sm" data-act="stop">หยุด</button>');
+  }
+  tick(); timer=setInterval(tick,1000); syncButtons();
+  try{
+    var data=(mode==="claude")
+      ? await sample.json(prompt,{signal:ctl.signal,cache:false,onText:function(u){chars=u.text.length}})
+      : await serverJSON(prompt,ctl.signal);
+    setStatus(which);
+    return data;
+  }catch(e){
+    var code=(e&&e.code)||"upstream_error";
+    if(code==="cancelled") setStatus(which,"info",'<span class="grow">หยุดแล้ว ผลเดิมยังอยู่</span>');
+    else if(DENY.indexOf(code)>=0){ aiState="denied"; setStatus(which); aiNotice() }
+    else setStatus(which,"err",'<span class="grow">'+esc(ERR[code]||"เชื่อมต่อ AI ไม่สำเร็จ กดอีกครั้ง")+'</span>');
+    return null;
+  }finally{
+    clearInterval(timer); busy=null; ctl=null; syncButtons();
+  }
+}
+
+async function runAn(){
+  var I=inputs();
+  if(!I.s.length||!I.o.length||!I.a.length){ toast("กรอกช่อง S, O และ A อย่างน้อยช่องละหนึ่งข้อก่อน"); return }
+  var key=inputKey();
+  var d=await callAI("an",anPrompt(I));
+  if(!d) return;
+  try{ state.analysis=normAn(d,I) }catch(e){ setStatus("an","err",'<span class="grow">'+ERR.invalid_json+'</span>'); return }
+  state.anKey=key; state.demo=false;
+  if(state.plan) state.planKey="";   /* plan now built on old analysis */
+  renderAn(); renderPlan(); syncButtons(); updateStale(); save();
+  toast("วิเคราะห์เสร็จแล้ว");
+}
+async function runPlan(){
+  if(!state.analysis) return;
+  var I=inputs(), extra=val("extra").trim();
+  var d=await callAI("plan",planPrompt(I,state.analysis,extra));
+  if(!d) return;
+  try{ state.plan=normPlan(d) }catch(e){ setStatus("plan","err",'<span class="grow">'+ERR.invalid_json+'</span>'); return }
+  state.demo=false; state.planKey=planInputKey();
+  renderPlan(); syncButtons(); updateStale(); save();
+  toast("สร้างแผนกลยุทธ์แล้ว");
+}
+
+function applyItem(code,mode){
+  var A=state.analysis; if(!A) return;
+  var it=A.items.filter(function(x){return x.code===code})[0]; if(!it) return;
+  var k=code.charAt(0).toLowerCase(), L=val(k).split(/\r?\n/);
+  var idx=-1; L.forEach(function(x,i){ if(idx<0&&x.trim()===it.orig) idx=i });
+  if(idx<0){ toast("ไม่พบข้อ "+code+" ในช่อง "+k.toUpperCase()+" แล้ว"); return }
+  var nt=it.suggestion||it.orig;
+  if(mode==="move"){
+    var t=it.move_to.toLowerCase(); if(LETTERS.indexOf(t)<0) return;
+    L.splice(idx,1); el(F[k]).value=L.join("\n");
+    var T=val(t).replace(/\s+$/,""); el(F[t]).value=(T?T+"\n":"")+nt;
+    toast("ย้ายไปช่อง "+it.move_to+" แล้ว");
+  } else {
+    L[idx]=nt; el(F[k]).value=L.join("\n");
+    toast("แทนถ้อยคำในช่อง "+k.toUpperCase()+" แล้ว");
+  }
+  it.applied=true;
+  renderAn(); onInputs();
+}
+
+/* ---------- markdown copy ---------- */
+function md(){
+  var I=inputs(), A=state.analysis, P=state.plan, L=[];
+  L.push("# แผนกลยุทธ์ "+(I.school||"สถานศึกษา")); L.push("");
+  if(I.year) L.push("เป้าหมายปี พ.ศ. "+I.year),L.push("");
+  L.push("## ข้อมูล SOAR"); L.push("");
+  LETTERS.forEach(function(k){ I[k].forEach(function(x,i){ L.push("- **"+k.toUpperCase()+(i+1)+"** "+x) }) });
+  if(A){
+    L.push(""); L.push("## ผลการวิเคราะห์"); L.push(""); L.push(A.overview); L.push("");
+    if(A.pairs.length){ L.push("**คู่ S × O ที่ใช้ทำกลยุทธ์**"); A.pairs.forEach(function(p){ L.push("- "+p.s+" × "+p.o+" — "+p.reason) }); L.push("") }
+    if(A.gaps.length){ L.push("**ช่องว่าง**"); A.gaps.forEach(function(g){ L.push("- "+g) }); L.push("") }
+    if(A.align_summary){ L.push("**ความสอดคล้องกับแผนจังหวัด** "+A.align_summary); L.push("") }
+  }
+  if(P){
+    L.push("## วิสัยทัศน์"); L.push(""); L.push("“"+P.vision+"”"); L.push("");
+    function pj(x){ return arr(x.prov).length?" [จว. "+x.prov.join(", ")+"]":"" }
+    L.push("## พันธกิจ"); L.push(""); P.missions.forEach(function(m,i){ L.push((i+1)+". "+m.text+pj(m)) }); L.push("");
+    L.push("## เป้าประสงค์"); L.push(""); P.goals.forEach(function(g,i){ L.push((i+1)+". "+g.text+pj(g)) }); L.push("");
+    L.push("## กลยุทธ์"); L.push("");
+    P.strategies.forEach(function(s,i){
+      L.push((i+1)+". **"+s.title+"** ("+s.pair.join(" × ")+")"+pj(s));
+      if(s.why) L.push("   - เหตุผล: "+s.why);
+      s.projects.forEach(function(p){ L.push("   - โครงการ: "+p) });
+    });
+    L.push(""); L.push("## ตัวชี้วัดความสำเร็จ"); L.push("");
+    L.push("| เป้าประสงค์ | ตัวชี้วัด | ค่าเป้าหมาย |"); L.push("|---|---|---|");
+    P.kpis.forEach(function(k){ L.push("| "+(k.goal||"-")+" | "+k.text+" | "+(k.target||"-")+" |") });
+    var PR=provRows(P);
+    if(PR.length){
+      L.push(""); L.push("## ความสอดคล้องกับแผนจังหวัด"); L.push("");
+      L.push("| หัวข้อแผนจังหวัด | กลยุทธ์ | ตัวชี้วัด | สถานะ |"); L.push("|---|---|---|---|");
+      PR.forEach(function(r){ L.push("| "+r.code+" "+r.label+" | "+(r.s.length?r.s.join(", "):"—")+" | "+(r.k.length?r.k.join("; "):"—")+" | "+ALS[r.status][0]+" |") });
+    }
+    if(P.risks.length){
+      L.push(""); L.push("## ทะเบียนความเสี่ยง"); L.push("");
+      L.push("| ความเสี่ยง | แนวทางรับมือ |"); L.push("|---|---|");
+      P.risks.forEach(function(r){ L.push("| "+r.text+" | "+r.response+" |") });
+    }
+    if(P.advice.length){ L.push(""); L.push("> **ควรตรวจก่อนใช้**"); P.advice.forEach(function(a){ L.push("> - "+a) }) }
+  }
+  return L.join("\n");
+}
+function copy(t){
+  function fb(){
+    try{
+      var ta=document.createElement("textarea");
+      ta.value=t; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select(); document.execCommand("copy");
+      document.body.removeChild(ta); toast("คัดลอกแผนแล้ว");
+    }catch(e){ toast("คัดลอกไม่สำเร็จ") }
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function(){toast("คัดลอกแล้ว วางใน Word ได้เลย")},fb);
+  else fb();
+}
+
+/* ---------- example (pre-written, marked as example) ---------- */
+var DEMO={
+  school:"โรงเรียนมัธยมศึกษาขนาดกลาง (ตัวอย่าง)", year:"2572", ctx:"", extra:"",
+  s:"ครูมีทักษะ Active Learning\nชุมชนมีภูมิปัญญาท้องถิ่นเข้มแข็ง\nมีเครือข่ายศิษย์เก่า",
+  o:"นโยบายหลักสูตรฐานสมรรถนะ\nแหล่งเรียนรู้ดิจิทัลแบบเปิด\nมหาวิทยาลัยในพื้นที่พร้อมเป็นภาคี",
+  a:"มีสมรรถนะ\nรักษ์ถิ่น\nก้าวทันโลกดิจิทัล",
+  r:"ผู้เรียนผ่านเกณฑ์สมรรถนะ ≥ 80%\nมีโครงงานฐานชุมชนทุกระดับชั้น"
+};
+var DEMO_AN={
+  overview:"ข้อมูลมีทิศทางชัดสามด้าน คือ สมรรถนะ ท้องถิ่น และดิจิทัล แต่ยังต้องแก้ก่อนวางแผนสามจุด ภูมิปัญญาชุมชนเป็นปัจจัยภายนอกจึงควรอยู่ในช่อง O ภาพฝัน “มีสมรรถนะ” กว้างจนวัดไม่ได้ และด้านดิจิทัลยังไม่มีจุดแข็งภายในหรือตัวชี้วัดรองรับ",
+  readiness:"revise",
+  items:[
+    {code:"S1",verdict:"ok",comment:"เป็นความสามารถภายในที่ใช้ขับเคลื่อนหลักสูตรฐานสมรรถนะได้โดยตรง",suggestion:"",move_to:""},
+    {code:"S2",verdict:"misplaced",comment:"ภูมิปัญญาเป็นทรัพยากรของชุมชน ไม่ใช่สิ่งที่โรงเรียนควบคุมได้ ถ้าโรงเรียนมีกลไกดึงปราชญ์มาร่วมสอนอยู่แล้ว ส่วนนั้นจึงนับเป็นจุดแข็ง",suggestion:"ชุมชนมีภูมิปัญญาท้องถิ่นและปราชญ์ชาวบ้านที่พร้อมร่วมจัดการเรียนรู้",move_to:"O"},
+    {code:"S3",verdict:"vague",comment:"บอกว่ามีเครือข่าย แต่ไม่บอกว่าเครือข่ายช่วยอะไรได้ จึงนำไปใช้วางกลยุทธ์ได้ยาก",suggestion:"เครือข่ายศิษย์เก่าสนับสนุนทุนการศึกษาและเป็นวิทยากรด้านอาชีพ",move_to:""},
+    {code:"O1",verdict:"ok",comment:"นโยบายเปิดทางชัดเจนและสอดคล้องกับจุดแข็งด้านการสอน",suggestion:"",move_to:""},
+    {code:"O2",verdict:"ok",comment:"ช่วยลดต้นทุนผลิตสื่อ แต่ต้องดูความพร้อมอุปกรณ์ของผู้เรียนประกอบ",suggestion:"",move_to:""},
+    {code:"O3",verdict:"ok",comment:"เป็นภาคีที่ช่วยได้ทั้งด้านวิชาการและการพัฒนาครู",suggestion:"",move_to:""},
+    {code:"A1",verdict:"vague",comment:"คำว่าสมรรถนะกว้างเกินไป ควรระบุว่าเน้นสมรรถนะใด",suggestion:"ผู้เรียนมีสมรรถนะการคิดขั้นสูงและการแก้ปัญหา",move_to:""},
+    {code:"A2",verdict:"ok",comment:"ชัดและเชื่อมกับทรัพยากรชุมชนได้",suggestion:"",move_to:""},
+    {code:"A3",verdict:"reword",comment:"ทิศทางดี แต่ควรบอกว่าก้าวทันในความหมายใด",suggestion:"ผู้เรียนใช้เทคโนโลยีดิจิทัลอย่างรู้เท่าทันและสร้างสรรค์",move_to:""},
+    {code:"R1",verdict:"ok",comment:"วัดได้และมีค่าเป้าหมาย ต้องกำหนดเครื่องมือประเมินสมรรถนะให้ชัด",suggestion:"",move_to:""},
+    {code:"R2",verdict:"reword",comment:"นับจำนวนได้ แต่ไม่บอกคุณภาพของโครงงาน",suggestion:"ทุกระดับชั้นมีโครงงานฐานชุมชนที่ผ่านเกณฑ์ระดับดีขึ้นไปอย่างน้อย 1 โครงงาน",move_to:""}
+  ],
+  themes:[
+    {name:"การเรียนรู้ฐานสมรรถนะ",codes:["S1","O1","A1","R1"],insight:"แกนที่ข้อมูลรองรับแน่นที่สุด ครูพร้อมและนโยบายเปิดทาง"},
+    {name:"ท้องถิ่นเป็นห้องเรียน",codes:["S2","O3","A2","R2"],insight:"มีทรัพยากรชุมชนและภาคีมหาวิทยาลัย แต่โรงเรียนยังไม่ได้ระบุกลไกของตนเอง"},
+    {name:"ดิจิทัล",codes:["O2","A3"],insight:"มีแค่โอกาสภายนอกกับภาพฝัน ไม่มีจุดแข็งหรือตัวชี้วัดรองรับ จุดนี้เปราะที่สุด"}
+  ],
+  pairs:[
+    {s:"S1",o:"O1",fit:"high",reason:"ครูที่สอนแบบ Active Learning ได้อยู่แล้วเป็นกำลังหลักในการปรับสู่หลักสูตรฐานสมรรถนะ และเป็นพี่เลี้ยงให้ครูคนอื่นได้"},
+    {s:"S2",o:"O3",fit:"high",reason:"มหาวิทยาลัยช่วยจัดระบบความรู้จากภูมิปัญญาให้เป็นหน่วยการเรียนรู้และโครงงานที่ประเมินได้"},
+    {s:"S1",o:"O2",fit:"medium",reason:"ครูนำสื่อดิจิทัลแบบเปิดมาใช้ในกิจกรรม Active Learning ได้ทันทีโดยไม่ต้องลงทุนผลิตสื่อเอง"},
+    {s:"S3",o:"O3",fit:"medium",reason:"ศิษย์เก่าที่อยู่ในมหาวิทยาลัยหรือสถานประกอบการช่วยเชื่อมภาคีและเป็นพี่เลี้ยงผู้เรียน"}
+  ],
+  gaps:[
+    "ภาพฝัน “ก้าวทันโลกดิจิทัล” ยังไม่มีตัวชี้วัดในช่อง R",
+    "ไม่มีจุดแข็งภายในด้านดิจิทัล แผนด้านนี้จึงพึ่งปัจจัยภายนอกทั้งหมด",
+    "ไม่มีข้อมูลด้านการบริหารและงบประมาณ จึงประเมินกำลังในการทำตามแผนได้ยาก"
+  ],
+  risks:[
+    {type:"T",text:"ผู้เรียนบางส่วนไม่มีอุปกรณ์หรืออินเทอร์เน็ตที่บ้าน",impact:"high"},
+    {type:"W",text:"ทักษะ Active Learning อาจกระจุกอยู่ที่ครูบางคน ถ้าครูแกนนำย้ายงานจะสะดุด",impact:"medium"},
+    {type:"T",text:"ความร่วมมือกับมหาวิทยาลัยขึ้นกับตัวบุคคล ถ้าไม่มีข้อตกลงเป็นลายลักษณ์อักษรอาจไม่ต่อเนื่อง",impact:"medium"}
+  ],
+  questions:[
+    "ครูที่จัด Active Learning ได้มีกี่คน และคิดเป็นครูแกนนำครบร้อยละ 20 ตามเกณฑ์จังหวัดหรือยัง",
+    "ผู้เรียนเข้าถึงอุปกรณ์ดิจิทัลที่บ้านได้ประมาณร้อยละเท่าใด",
+    "โรงเรียนมีข้อมูลฐานด้านคุณลักษณะ การจัดการตนเอง และสุขภาวะของผู้เรียนหรือไม่"
+  ],
+  align_summary:"สอดคล้องกับจังหวัดด้านครูมืออาชีพ หลักสูตรฐานสมรรถนะ และภาคีอุดมศึกษา แต่ยังขาดสามด้านที่จังหวัดให้น้ำหนักมาก คือ บทบาทผู้บริหาร ผลลัพธ์ผู้เรียนด้าน V-A-S (จริยธรรม การจัดการตนเอง สุขภาวะ) และตัวชี้วัด O-NET ม.3",
+  alignment:[
+    {code:"PV",status:"partial",by:["A1","A2","O3"],note:"ตรงเรื่องสมรรถนะ ท้องถิ่น และภาคีอุดมศึกษา แต่ยังไม่มีความปลอดภัยกายใจ การรู้คุณค่าตนเอง และเป้าหมายชีวิต"},
+    {code:"G1",status:"na",by:[],note:"เป็นกลไกระดับจังหวัด โรงเรียนมีส่วนร่วมในฐานะภาคี"},
+    {code:"E1",status:"missing",by:[],note:"SOAR ไม่มีเรื่องผู้บริหาร การนิเทศในชั้นเรียน และบทบาทโค้ช"},
+    {code:"E2",status:"missing",by:[],note:"ไม่มีข้อมูลด้านวัฒนธรรมองค์กรและการรู้จักครูรายบุคคล"},
+    {code:"E3",status:"partial",by:["S1"],note:"มีครูที่มีทักษะ AL แต่ยังไม่ระบุระบบ PLC และการพัฒนาครูตามความต้องการจำเป็น"},
+    {code:"T0",status:"partial",by:["S1"],note:"ยังไม่ทราบสัดส่วนครูแกนนำเทียบเกณฑ์ร้อยละ 20"},
+    {code:"T1",status:"covered",by:["S1","O1","O2"],note:"ทักษะ AL และหลักสูตรฐานสมรรถนะตรงกับคุณลักษณะครูมืออาชีพ"},
+    {code:"T2",status:"partial",by:["S1"],note:"ยังไม่มีเรื่องการเป็นโค้ชให้เพื่อนครูและการมีส่วนร่วมใน PLN"},
+    {code:"LV",status:"missing",by:[],note:"ไม่มีภาพฝันหรือตัวชี้วัดด้านจริยธรรมและคุณลักษณะอันพึงประสงค์"},
+    {code:"LA1",status:"missing",by:[],note:"ไม่มีเรื่อง EF การจัดการตนเอง และเป้าหมายชีวิต ซึ่งวิสัยทัศน์จังหวัดเน้น"},
+    {code:"LA2",status:"missing",by:[],note:"ไม่มีเรื่องสุขภาวะกายใจและการจัดการอารมณ์"},
+    {code:"LS",status:"partial",by:["R2"],note:"โครงงานฐานชุมชนฝึกทำงานเป็นทีม แต่ยังไม่มีตัวชี้วัดทักษะชีวิต"},
+    {code:"LK",status:"partial",by:["R1"],note:"โรงเรียนมัธยมควรใช้ O-NET ม.3 (เป้าจังหวัด 50.00) และ PISA ส่วน RT, NT และปฐมวัยไม่เกี่ยวข้อง"}
+  ]
+};
+var DEMO_PLAN={
+  vision:"ภายในปี 2572 โรงเรียนพัฒนาผู้เรียนให้มีสมรรถนะการคิดและการแก้ปัญหา รู้จักตนเองและมีเป้าหมายชีวิต รักษ์ถิ่น และใช้เทคโนโลยีดิจิทัลอย่างรู้เท่าทัน ในสภาพแวดล้อมที่ปลอดภัยทั้งกายและใจ ด้วยพลังของผู้บริหาร ครูมืออาชีพ ชุมชน และภาคีเครือข่าย",
+  vision_why:"ครอบคลุมภาพฝันทั้งสามท่อน และเติมแนวคิดหลักของวิสัยทัศน์จังหวัด คือ ความปลอดภัยกายใจ การรู้จักตนเองและมีเป้าหมายชีวิต และการรวมพลังผู้บริหาร ครูแกนนำ และภาคีเชิงพื้นที่",
+  missions:[
+    {text:"พัฒนาการจัดการเรียนรู้ฐานสมรรถนะด้วยกระบวนการ Active Learning",refs:["A1","S1","O1"],prov:["T1","LK"]},
+    {text:"จัดการเรียนรู้บนฐานภูมิปัญญาและบริบทชุมชนร่วมกับภาคีเครือข่าย",refs:["A2","S2","O3"],prov:["PV","LS"]},
+    {text:"ส่งเสริมการใช้แหล่งเรียนรู้และเทคโนโลยีดิจิทัลอย่างรู้เท่าทัน",refs:["A3","O2"],prov:["T1","T2"]},
+    {text:"สร้างความร่วมมือกับศิษย์เก่า มหาวิทยาลัย และชุมชนอย่างเป็นระบบ",refs:["S3","O3"],prov:["PV","E3"]},
+    {text:"ส่งเสริมคุณธรรม การจัดการตนเอง และสุขภาวะกายใจของผู้เรียนในสภาพแวดล้อมที่ปลอดภัย",refs:[],prov:["PV","LV","LA1","LA2"]},
+    {text:"พัฒนาผู้บริหารและครูแกนนำให้เป็นผู้นำการเรียนรู้ด้วยระบบนิเทศแบบโค้ชและ PLC",refs:["S1"],prov:["E1","E2","E3","T0","T2"]}
+  ],
+  goals:[
+    {text:"ผู้เรียนมีสมรรถนะการคิดขั้นสูงและการแก้ปัญหา และมีผลสัมฤทธิ์ตามเป้าหมายจังหวัด",mission:1,prov:["LK"]},
+    {text:"ผู้เรียนเห็นคุณค่าและนำภูมิปัญญาท้องถิ่นไปสร้างโครงงานร่วมกับผู้อื่นได้",mission:2,prov:["LS"]},
+    {text:"ผู้เรียนใช้เทคโนโลยีดิจิทัลเพื่อการเรียนรู้อย่างปลอดภัยและสร้างสรรค์",mission:3,prov:["PV"]},
+    {text:"สถานศึกษามีภาคีเครือข่ายที่ร่วมจัดการศึกษาอย่างต่อเนื่อง",mission:4,prov:["PV","E3"]},
+    {text:"ผู้เรียนมีวินัย ซื่อสัตย์ จัดการตนเองและอารมณ์ได้ และมีเป้าหมายชีวิต",mission:5,prov:["LV","LA1","LA2"]},
+    {text:"ผู้บริหารและครูแกนนำเป็นผู้นำการเรียนรู้ในบทบาทโค้ช",mission:6,prov:["E1","E2","T0","T2"]}
+  ],
+  strategies:[
+    {title:"ยกระดับการจัดการเรียนรู้ฐานสมรรถนะผ่าน PLC และ Active Learning",pair:["S1","O1"],goals:[1],prov:["T1","E3","LK"],why:"ใช้ครูที่มีทักษะอยู่แล้วเป็นแกนนำขยายผลทั้งโรงเรียน ลดความเสี่ยงที่ทักษะกระจุกอยู่ที่ครูไม่กี่คน",projects:["PLC ออกแบบหน่วยการเรียนรู้ฐานสมรรถนะ","ยกระดับผลสัมฤทธิ์ O-NET ม.3 รายกลุ่มสาระ"]},
+    {title:"พัฒนาหลักสูตรท้องถิ่นและโครงงานฐานชุมชนร่วมกับมหาวิทยาลัย",pair:["S2","O3"],goals:[2,4],prov:["PV","LS"],why:"มหาวิทยาลัยช่วยแปลงภูมิปัญญาเป็นหน่วยการเรียนรู้ ชุมชนเป็นทั้งวิทยากรและพื้นที่ทำโครงงาน",projects:["ปราชญ์ชาวบ้านสู่ห้องเรียน","โครงงานฐานชุมชนทุกระดับชั้น"]},
+    {title:"ส่งเสริมการเรียนรู้ด้วยแหล่งเรียนรู้ดิจิทัลแบบเปิด",pair:["S1","O2"],goals:[3,1],prov:["T1","T2"],why:"ครูนำสื่อเปิดเข้าสู่กิจกรรม Active Learning ได้โดยไม่ต้องผลิตเอง พร้อมจัดอุปกรณ์ให้ผู้เรียนที่ขาดแคลน",projects:["คลังสื่อดิจิทัลแบบเปิดรายกลุ่มสาระ","ระบบยืมอุปกรณ์สำหรับผู้เรียนที่ขาดแคลน"]},
+    {title:"สร้างภาคีเครือข่ายศิษย์เก่าและสถาบันอุดมศึกษาอย่างเป็นระบบ",pair:["S3","O3"],goals:[4],prov:["PV","E3"],why:"ทำข้อตกลงความร่วมมือเป็นลายลักษณ์อักษร เพื่อไม่ให้ความร่วมมือขึ้นกับตัวบุคคล",projects:["จัดทำ MOU กับมหาวิทยาลัยในพื้นที่","ศิษย์เก่าพี่เลี้ยงอาชีพ"]},
+    {title:"พัฒนา EF ทักษะชีวิต และสุขภาวะผ่านการเรียนรู้เชิงรุกและระบบดูแลช่วยเหลือ",pair:["S1","O1"],goals:[5,2],prov:["LV","LA1","LA2","LS"],why:"ใช้ PBL และ CBL ที่ครูถนัดอยู่แล้วฝึกการตั้งเป้าหมาย การกำกับตนเอง และการทำงานเป็นทีม ควบคู่กับห้องเรียนจิตวิทยาเชิงบวก",projects:["ห้องเรียนจิตวิทยาเชิงบวก","ครูที่ปรึกษาโค้ชเป้าหมายชีวิตรายบุคคล"]},
+    {title:"นิเทศภายในแบบโค้ชและ PLC โดยผู้บริหารและครูแกนนำ",pair:["S1","O3"],goals:[6,1],prov:["E1","E2","E3","T0","T2"],why:"ผู้บริหารเข้าชั้นเรียนในบทบาทโค้ช และร่วมกับมหาวิทยาลัยพัฒนาครูแกนนำให้ถึงร้อยละ 20 ตามเกณฑ์จังหวัด",projects:["นิเทศในชั้นเรียนแบบ Coaching โดยผู้บริหาร","ยกระดับครูแกนนำร่วมกับมหาวิทยาลัย"]}
+  ],
+  kpis:[
+    {goal:1,text:"ร้อยละของผู้เรียนที่ผ่านเกณฑ์การประเมินสมรรถนะ",target:"≥ 80%",source:"R1",prov:[]},
+    {goal:1,text:"คะแนนเฉลี่ย O-NET ม.3 (รวม)",target:"≥ 50.00",source:"แผนจังหวัด",prov:["LK"]},
+    {goal:2,text:"จำนวนระดับชั้นที่มีโครงงานฐานชุมชนผ่านเกณฑ์ระดับดีขึ้นไป",target:"ครบทุกระดับชั้น",source:"R2",prov:["LS"]},
+    {goal:3,text:"ร้อยละของผู้เรียนที่ผ่านการประเมินความฉลาดรู้ดิจิทัล",target:"≥ 75%",source:"ใหม่",prov:["PV"]},
+    {goal:4,text:"จำนวนภาคีเครือข่ายที่มีข้อตกลงและกิจกรรมร่วมต่อเนื่อง",target:"≥ 3 ภาคีต่อปี",source:"ใหม่",prov:["PV","E3"]},
+    {goal:5,text:"ร้อยละของผู้เรียนที่ผ่านการประเมินคุณลักษณะอันพึงประสงค์ระดับดีขึ้นไป",target:"≥ 90%",source:"ใหม่",prov:["LV"]},
+    {goal:5,text:"ร้อยละของผู้เรียนที่ระบุเป้าหมายชีวิตและแผนพัฒนาตนเองได้",target:"≥ 80%",source:"ใหม่",prov:["LA1","LA2"]},
+    {goal:6,text:"สัดส่วนครูแกนนำต่อครูทั้งหมด",target:"≥ 20%",source:"แผนจังหวัด",prov:["T0","T1","T2"]},
+    {goal:6,text:"ผู้บริหารนิเทศในชั้นเรียนแบบโค้ชครบทุกกลุ่มสาระ",target:"ทุกภาคเรียน",source:"ใหม่",prov:["E1","E2","E3"]}
+  ],
+  risks:[
+    {text:"ผู้เรียนบางส่วนขาดอุปกรณ์ดิจิทัล",response:"สำรวจความพร้อมต้นปี จัดระบบยืมอุปกรณ์ และเปิดห้องคอมพิวเตอร์นอกเวลาเรียน"},
+    {text:"ครูแกนนำย้ายหรือเกษียณ",response:"ใช้ระบบครูพี่เลี้ยง และเก็บหน่วยการเรียนรู้ไว้ในคลังกลางของโรงเรียน"},
+    {text:"ความร่วมมือกับมหาวิทยาลัยไม่ต่อเนื่อง",response:"ทำ MOU ระบุกิจกรรมและผู้รับผิดชอบรายปี"}
+  ],
+  advice:[
+    "ตัวชี้วัดที่ระบุว่า “ใหม่” เป็นค่าเป้าหมายที่เสนอ ควรปรับตามข้อมูลฐานจริงของโรงเรียน",
+    "แผนจังหวัดตั้งเป้าถึงปีการศึกษา 2570 แต่แผนโรงเรียนตั้งปี 2572 ควรกำหนดค่าเป้าหมายรายปี ให้ปี 2570 ตรงกับเป้าจังหวัด",
+    "PISA ยังไม่มีค่าเป้าหมายจากจังหวัด ควรติดตามประกาศเพิ่มเติม"
+  ]
+};
+
+function setFields(d){
+  ["school","year","ctx","s","o","a","r","extra"].forEach(function(k){ el(F[k]).value=d[k]||"" });
+}
+function loadDemo(){
+  setFields(DEMO); el(F.prov).value=PROV_TSQM;
+  state.analysis=normAn(DEMO_AN,inputs()); state.anKey=inputKey();
+  state.plan=normPlan(DEMO_PLAN); state.planKey=planInputKey(); state.demo=true;
+  renderAll(); save();
+}
+function renderAll(){ counts(); renderAn(); renderPlan(); syncButtons(); updateStale() }
+
+/* ---------- boot ---------- */
+var saved=null, old=null;
+try{ var raw=localStorage.getItem(LS); if(raw) saved=JSON.parse(raw) }catch(e){}
+if(!saved){ try{ var r1=localStorage.getItem(LS1); if(r1) old=JSON.parse(r1) }catch(e){} }
+if(saved){
+  setFields(saved); el(F.prov).value=(typeof saved.prov==="string")?saved.prov:PROV_TSQM;
+  state.analysis=saved.analysis||null; state.anKey=saved.anKey||"";
+  state.plan=saved.plan||null; state.planKey=saved.planKey||""; state.demo=!!saved.demo;
+  /* saved results were normalised when created; keep them as they were analysed */
+  var SA=state.analysis;
+  if(!(SA&&Array.isArray(SA.items)&&Array.isArray(SA.themes)&&Array.isArray(SA.pairs)&&Array.isArray(SA.gaps)&&Array.isArray(SA.risks)&&Array.isArray(SA.questions))) state.analysis=null;
+  var SP=state.plan;
+  if(!(SP&&Array.isArray(SP.missions)&&Array.isArray(SP.goals)&&Array.isArray(SP.strategies)&&Array.isArray(SP.kpis)&&Array.isArray(SP.risks)&&Array.isArray(SP.advice))) state.plan=null;
+  renderAll();
+} else if(old){
+  setFields(old); el(F.prov).value=PROV_TSQM; renderAll(); save();
+} else loadDemo();
+aiNotice();
+
+(async function(){
+  if(window.claude&&window.claude.use){
+    try{ sample=await window.claude.use("sample") }catch(e){ sample=null }
+    if(sample){ mode="claude"; aiState="ok" }
+  }
+  if(!sample){
+    /* hosted copy (Vercel): AI goes through /api/ai, which holds the Gemini key server-side */
+    try{
+      var r=await fetch("/api/ai",{method:"GET",cache:"no-store"}), j=null;
+      try{ j=await r.json() }catch(e){}
+      if(r.ok&&j&&j.ok){ mode="server"; aiState="ok" }
+      else aiState=(j&&j.error==="no_key")?"nokey":"none";
+    }catch(e){ aiState="none" }
+  }
+  aiNotice(); syncButtons();
+})();
+
+/* ---------- events ---------- */
+document.addEventListener("input",function(e){
+  if(e.target.tagName==="TEXTAREA"||e.target.tagName==="INPUT") onInputs();
+});
+var clearArm=0;
+document.addEventListener("click",function(e){
+  var t=e.target.closest&&e.target.closest("[data-act],[data-view],[data-apply]");
+  if(!t) return;
+  var v=t.getAttribute("data-view");
+  if(v){
+    document.querySelectorAll("[data-view]").forEach(function(b){ b.setAttribute("aria-selected",String(b===t)) });
+    el("inp").setAttribute("data-off",v==="inp"?"0":"1");
+    el("out").setAttribute("data-off",v==="out"?"0":"1");
+    window.scrollTo({top:0,behavior:"smooth"});
+    return;
+  }
+  var ap=t.getAttribute("data-apply");
+  if(ap){ applyItem(ap,t.getAttribute("data-mode")); return }
+  var a=t.getAttribute("data-act");
+  if(a==="an") runAn();
+  else if(a==="plan") runPlan();
+  else if(a==="stop"){ if(ctl) ctl.abort() }
+  else if(a==="copy"){
+    if(!state.analysis&&!state.plan){ toast("ยังไม่มีผลวิเคราะห์หรือแผนให้คัดลอก"); return }
+    copy(md());
+  }
+  else if(a==="demo"){ if(busy) return; loadDemo(); toast("โหลดตัวอย่างแล้ว") }
+  else if(a==="prov-reset"){ el(F.prov).value=PROV_TSQM; onInputs(); renderAn(); renderPlan(); toast("คืนค่าแผน TSQM พิษณุโลกแล้ว") }
+  else if(a==="clear"){
+    if(busy) return;
+    var b=el("b-clear");
+    if(Date.now()-clearArm>3000){ clearArm=Date.now(); b.textContent="กดอีกครั้งเพื่อล้าง"; setTimeout(function(){ b.textContent="ล้าง" },3000); return }
+    clearArm=0; b.textContent="ล้าง";
+    setFields({}); state={analysis:null,anKey:"",plan:null,planKey:"",demo:false};
+    setStatus("plan"); renderAll(); save(); aiNotice(); toast("ล้างข้อมูลแล้ว");
+  }
+});
+})();
+</script>
+
+</body></html>
