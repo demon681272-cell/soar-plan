@@ -16,6 +16,7 @@
   --warn:#8E5610; --warn-soft:#FAEEDA;
   --bad:#A32A2A; --bad-soft:#F8E3E1;
   --pv:#7A4A12; --pv-soft:#F3E8D8;
+  --pol:#5B3F8C; --pol-soft:#ECE6F6;
   --shadow:0 1px 2px rgba(20,35,33,.05), 0 8px 24px -16px rgba(20,35,33,.25);
   --mono:"IBM Plex Mono",ui-monospace,monospace;
   --body:"Sarabun","Leelawadee UI","Tahoma",sans-serif;
@@ -29,6 +30,7 @@
   --a:#DE8DB7; --a-soft:#381B29; --r:#AFC95B; --r-soft:#242D12;
   --ok:#7FC791; --ok-soft:#17301E; --warn:#DFAA55; --warn-soft:#332714; --bad:#E68C82; --bad-soft:#3A1C19;
   --pv:#E2B57E; --pv-soft:#33250F;
+  --pol:#BBA4EA; --pol-soft:#2A2142;
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -18px rgba(0,0,0,.8);
   color-scheme:dark;
 }}
@@ -40,6 +42,7 @@
   --a:#DE8DB7; --a-soft:#381B29; --r:#AFC95B; --r-soft:#242D12;
   --ok:#7FC791; --ok-soft:#17301E; --warn:#DFAA55; --warn-soft:#332714; --bad:#E68C82; --bad-soft:#3A1C19;
   --pv:#E2B57E; --pv-soft:#33250F;
+  --pol:#BBA4EA; --pol-soft:#2A2142;
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -18px rgba(0,0,0,.8);
   color-scheme:dark;
 }
@@ -136,6 +139,13 @@ textarea.short{min-height:64px}
 .tag.a{background:var(--a-soft);color:var(--a)} .tag.r{background:var(--r-soft);color:var(--r)}
 .tag.p{background:var(--ink);color:var(--bg)} .tag.g{background:var(--surface-3);color:var(--ink-2)}
 .tag.pv{background:var(--pv-soft);color:var(--pv)}
+.tag.pol{background:var(--pol-soft);color:var(--pol)}
+.box.Pol{border-left:3px solid var(--pol)}
+.box.Pol>h2 .n{background:var(--pol-soft);color:var(--pol);width:auto;padding:0 6px}
+.pol-f{display:grid;gap:10px}
+.pol-f label{display:block;min-width:0}
+.pol-f .lbl{display:flex;justify-content:space-between;gap:8px}
+.pol-f .lbl em{font-style:normal;font-family:var(--mono);font-weight:600;color:var(--pol)}
 .box.P{border-left:3px solid var(--pv)}
 .box.P>h2 .n{background:var(--pv-soft);color:var(--pv);width:auto;padding:0 6px}
 .box.P textarea{min-height:260px;font-size:13px;line-height:1.65}
@@ -288,6 +298,18 @@ footer{max-width:1240px;margin:0 auto;padding:6px 16px 0;font-size:12px;color:va
         </div>
       </div>
 
+      <div class="box Pol">
+        <h2><span class="n">นโยบาย</span>นโยบายและจุดเน้น <small>ไม่บังคับ</small><span class="cnt" id="c-pol">ไม่บังคับ</span></h2>
+        <div class="in">
+          <p class="tip">บรรทัดละหนึ่งข้อ กรอกเฉพาะช่องที่โรงเรียนต้องการ AI จะตรวจความสอดคล้องและอ้างรหัส เช่น สพฐ.1 ในแผน</p>
+          <div class="pol-f">
+            <label><span class="lbl">กระทรวงศึกษาธิการ <em id="c-moe"></em></span><textarea id="ta-moe" class="short" placeholder="เช่น เรียนดี มีความสุข"></textarea></label>
+            <label><span class="lbl">สพฐ. <em id="c-obec"></em></span><textarea id="ta-obec" class="short" placeholder="เช่น ความปลอดภัยของผู้เรียน&#10;ลดภาระครูและผู้เรียน"></textarea></label>
+            <label><span class="lbl">สำนักงานเขตพื้นที่การศึกษา <em id="c-esa"></em></span><textarea id="ta-esa" class="short" placeholder="จุดเน้นของเขตพื้นที่"></textarea></label>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <div class="pane out" id="out" data-off="1">
@@ -297,7 +319,7 @@ footer{max-width:1240px;margin:0 auto;padding:6px 16px 0;font-size:12px;color:va
           <span class="no">1</span>
           <div class="grow">
             <h2>วิเคราะห์ SOAR</h2>
-            <div class="desc">AI ตรวจทีละข้อว่าอยู่ถูกช่องและชัดพอไหม เทียบกับแผนจังหวัด จับคู่จุดแข็งกับโอกาส และหาช่องว่างกับความเสี่ยง</div>
+            <div class="desc">AI ตรวจทีละข้อว่าอยู่ถูกช่องและชัดพอไหม เทียบกับแผนจังหวัดและนโยบาย จับคู่จุดแข็งกับโอกาส และหาช่องว่างกับความเสี่ยง</div>
           </div>
           <div class="acts"><button class="btn primary" id="go-an" data-act="an">วิเคราะห์ด้วย AI</button></div>
         </div>
@@ -311,7 +333,7 @@ footer{max-width:1240px;margin:0 auto;padding:6px 16px 0;font-size:12px;color:va
           <span class="no">2</span>
           <div class="grow">
             <h2>สร้างแผนกลยุทธ์</h2>
-            <div class="desc">AI เขียนวิสัยทัศน์ พันธกิจ เป้าประสงค์ กลยุทธ์ และตัวชี้วัด จากผลวิเคราะห์ในขั้นที่ 1 โดยอ้างรหัสแผนจังหวัดทุกจุด</div>
+            <div class="desc">AI เขียนวิสัยทัศน์ พันธกิจ เป้าประสงค์ กลยุทธ์ และตัวชี้วัด จากผลวิเคราะห์ในขั้นที่ 1 โดยอ้างรหัสแผนจังหวัดและนโยบายทุกจุด</div>
           </div>
           <div class="acts"><button class="btn primary" id="go-plan" data-act="plan" disabled>สร้างแผนกลยุทธ์</button></div>
         </div>
@@ -336,7 +358,29 @@ footer{max-width:1240px;margin:0 auto;padding:6px 16px 0;font-size:12px;color:va
 (function(){
 "use strict";
 var LS="soar-ai-v2", LS1="soar-quick-v1";
-var F={school:"f-school",year:"f-year",ctx:"f-ctx",s:"ta-s",o:"ta-o",a:"ta-a",r:"ta-r",extra:"ta-extra",prov:"ta-prov"};
+var F={school:"f-school",year:"f-year",ctx:"f-ctx",s:"ta-s",o:"ta-o",a:"ta-a",r:"ta-r",extra:"ta-extra",prov:"ta-prov",moe:"ta-moe",obec:"ta-obec",esa:"ta-esa"};
+/* optional policy lists: each line becomes a reference item with its own code */
+var POL=[
+  {k:"moe",p:"ศธ",title:"นโยบาย/จุดเน้นกระทรวงศึกษาธิการ"},
+  {k:"obec",p:"สพฐ",title:"นโยบาย/จุดเน้น สพฐ."},
+  {k:"esa",p:"เขต",title:"นโยบาย/จุดเน้นสำนักงานเขตพื้นที่การศึกษา"}
+];
+function cut(s){ s=String(s); return s.length>90?s.slice(0,88)+"…":s }
+function refListFrom(I){
+  var out=parseProv(I.prov).map(function(p){ return {code:p.code,label:p.label,kind:"prov"} });
+  POL.forEach(function(P){ arr(I[P.k]).forEach(function(x,i){ out.push({code:P.p+"."+(i+1),label:cut(x),kind:P.k}) }) });
+  return out;
+}
+function refList(){ return refListFrom(inputs()) }
+function refText(I){
+  var parts=[];
+  if(I.prov) parts.push("แผนระดับจังหวัด:\n"+I.prov);
+  POL.forEach(function(P){
+    var L=arr(I[P.k]); if(!L.length) return;
+    parts.push(P.title+":\n"+L.map(function(x,i){ return "["+P.p+"."+(i+1)+"] "+x }).join("\n"));
+  });
+  return parts.join("\n\n");
+}
 var PROV_TSQM=[
 "แผน TSQM จังหวัดพิษณุโลก · เป้าประสงค์ระยะปีที่ 2–3",
 "",
@@ -364,7 +408,7 @@ function parseProv(t){
   });
   return out;
 }
-function provMap(){ var m={}; parseProv(val("prov")).forEach(function(p){ m[p.code]=p.label }); return m }
+function provMap(){ var m={}; refList().forEach(function(p){ m[p.code]=p.label }); return m }
 var LETTERS=["s","o","a","r"];
 var NAMES={s:"จุดแข็ง",o:"โอกาส",a:"ภาพฝัน",r:"ผลลัพธ์ที่วัดได้"};
 function el(id){ return document.getElementById(id) }
@@ -379,7 +423,7 @@ var state={analysis:null,anKey:"",plan:null,planKey:"",demo:false};
 var sample=null, mode="", aiState="wait", busy=null, ctl=null, timer=null;
 
 function inputs(){
-  return {school:val("school").trim(),year:val("year").trim(),ctx:val("ctx").trim(),s:lines("s"),o:lines("o"),a:lines("a"),r:lines("r"),prov:val("prov").trim()};
+  return {school:val("school").trim(),year:val("year").trim(),ctx:val("ctx").trim(),s:lines("s"),o:lines("o"),a:lines("a"),r:lines("r"),prov:val("prov").trim(),moe:lines("moe"),obec:lines("obec"),esa:lines("esa")};
 }
 function inputKey(){ return JSON.stringify(inputs()) }
 function planInputKey(){ return inputKey()+"|"+val("extra").trim()+"|"+(state.anKey||"")+"|"+JSON.stringify(state.analysis||null) }
@@ -392,8 +436,10 @@ function chip(c){
   c=String(c||"").toUpperCase(); var m=/^([SOAR])\d+$/.exec(c);
   return '<span class="tag '+(m?m[1].toLowerCase():"g")+'">'+esc(c)+'</span>';
 }
+function isPol(c){ return /^(ศธ|สพฐ|เขต)\./.test(String(c||"")) }
+function refLabel(c){ c=String(c||"").toUpperCase(); return isPol(c)?c:"จว."+c }
 function pchip(c,lab){
-  return '<span class="tag pv"'+(lab?' title="'+esc(lab)+'"':'')+'>จว.'+esc(String(c||"").toUpperCase())+'</span>';
+  return '<span class="tag '+(isPol(c)?"pol":"pv")+'"'+(lab?' title="'+esc(lab)+'"':'')+'>'+esc(refLabel(c))+'</span>';
 }
 function pchips(list){ var M=provMap(); return arr(list).map(function(c){return pchip(c,M[c])}).join("") }
 
@@ -422,9 +468,9 @@ function anPrompt(I){
 "- pairs คือคู่ S×O ที่ควรนำไปทำกลยุทธ์ ให้บอกว่าใช้จุดแข็งคว้าโอกาสอย่างไร ไม่ใช่แค่บอกว่าเกี่ยวกัน",
 "- risks คือจุดอ่อน (W) และอุปสรรค (T) ที่อนุมานได้อย่างสมเหตุสมผลจากข้อมูลและบริบทโรงเรียนไทย เพราะ SOAR ไม่มีช่องนี้",
 "- gaps คือความไม่สอดคล้อง เช่น ภาพฝันที่ไม่มีจุดแข็งหรือโอกาสรองรับ ภาพฝันที่ไม่มีตัวชี้วัด ตัวชี้วัดที่ไม่ตรงภาพฝันใด",
-(I.prov?
-"- แผนของโรงเรียนต้องสอดคล้องกับแผนระดับจังหวัดด้านล่าง ให้ตรวจ alignment ครบทุกรหัสในวงเล็บเหลี่ยมของแผนจังหวัด: status = covered (มีข้อ SOAR รองรับชัด) | partial (รองรับบางส่วน) | missing (ไม่มีเลย) | na (ไม่เกี่ยวกับระดับหรือประเภทของโรงเรียนนี้ เช่น ตัวชี้วัดชั้นประถมสำหรับโรงเรียนมัธยม หรือเป็นกลไกระดับจังหวัดล้วน); by = รหัส SOAR ที่รองรับ; note = สิ่งที่ขาดหรือควรเพิ่มใน SOAR ให้เฉพาะเจาะจง ถ้าข้อมูลไม่บอกระดับโรงเรียน ให้อนุมานจากชื่อและบริบท และบอกไว้ใน note"
-:"- ไม่มีแผนระดับจังหวัด ให้ align_summary = \"\" และ alignment = []"),
+(refText(I)?
+"- แผนของโรงเรียนต้องสอดคล้องกับแผนและนโยบายด้านล่าง (แผนจังหวัด และนโยบาย/จุดเน้นของกระทรวง สพฐ. หรือเขตพื้นที่ ตามที่ให้มา) ให้ตรวจ alignment ครบทุกรหัสในวงเล็บเหลี่ยม: status = covered (มีข้อ SOAR รองรับชัด) | partial (รองรับบางส่วน) | missing (ไม่มีเลย) | na (ไม่เกี่ยวกับระดับหรือประเภทของโรงเรียนนี้ เช่น ตัวชี้วัดชั้นประถมสำหรับโรงเรียนมัธยม หรือเป็นกลไกระดับจังหวัดล้วน); by = รหัส SOAR ที่รองรับ; note = สิ่งที่ขาดหรือควรเพิ่มใน SOAR ให้เฉพาะเจาะจง ถ้าข้อมูลไม่บอกระดับโรงเรียน ให้อนุมานจากชื่อและบริบท และบอกไว้ใน note"
+:"- ไม่มีแผนหรือนโยบายที่ต้องสอดคล้อง ให้ align_summary = \"\" และ alignment = []"),
 "",
 "ตอบเป็น JSON object เดียวเท่านั้น ภาษาไทย กระชับ ตามโครงสร้างนี้:",
 '{"overview":"ภาพรวม 2-4 ประโยค: จุดเด่นของข้อมูล และสิ่งที่ต้องแก้ก่อนวางแผน",',
@@ -435,16 +481,16 @@ function anPrompt(I){
 ' "gaps":["..."],',
 ' "risks":[{"type":"W | T","text":"...","impact":"high | medium | low"}],',
 ' "questions":["คำถามที่ผู้บริหารควรตอบก่อนวางแผน"],',
-' "align_summary":"สรุปความสอดคล้องกับแผนจังหวัด 2-3 ประโยค: ด้านที่สอดคล้อง และด้านที่ยังขาด",',
+' "align_summary":"สรุปความสอดคล้องกับแผนและนโยบาย 2-3 ประโยค: ด้านที่สอดคล้อง และด้านที่ยังขาด",',
 ' "alignment":[{"code":"E1","status":"covered | partial | missing | na","by":["S1"],"note":"..."}]}',
 "",
-"ข้อกำหนด: items ต้องครบทุกรหัสในข้อมูล | themes 2-4 | pairs 3-6 เรียงจากเหมาะที่สุด ใช้เฉพาะรหัสที่มีจริง | gaps 1-5 | risks 2-5 | questions 2-4"+(I.prov?" | alignment ครบทุกรหัสของแผนจังหวัด":""),
+"ข้อกำหนด: items ต้องครบทุกรหัสในข้อมูล | themes 2-4 | pairs 3-6 เรียงจากเหมาะที่สุด ใช้เฉพาะรหัสที่มีจริง | gaps 1-5 | risks 2-5 | questions 2-4"+(refText(I)?" | alignment ครบทุกรหัสของแผนและนโยบาย":""),
 "",
 "ข้อมูล SOAR:",
 soarText(I),
 "",
-"แผนระดับจังหวัดที่ต้องสอดคล้อง:",
-(I.prov||"(ไม่มี)")
+"แผนและนโยบายที่ต้องสอดคล้อง:",
+(refText(I)||"(ไม่มี)")
   ].join("\n");
 }
 function planPrompt(I,A,extra){
@@ -461,10 +507,10 @@ function planPrompt(I,A,extra){
 "- พันธกิจ 3-6 ข้อ ขึ้นต้นด้วยคำกริยา (พัฒนา ส่งเสริม สร้าง ยกระดับ ฯลฯ) บอกว่าโรงเรียนจะทำอะไร",
 "- เป้าประสงค์ บอกผลที่เกิดกับใคร (ผู้เรียน ครู ผู้บริหาร สถานศึกษา) อย่างน้อย 1 ข้อต่อพันธกิจ อ้างเลขพันธกิจใน mission",
 "- กลยุทธ์ 3-7 ข้อ แต่ละข้อต้องมาจากคู่ S×O ที่มีจริง (อ้างรหัสใน pair) อ้างเลขเป้าประสงค์ที่รองรับใน goals มีเหตุผล และโครงการ/กิจกรรมหลัก 1-3 รายการ",
-"- ตัวชี้วัด ทุกเป้าประสงค์ต้องมีอย่างน้อย 1 ตัว วัดได้ และมีค่าเป้าหมาย ใช้ข้อในช่อง R ก่อน (source = รหัส R) ใช้ค่าเป้าหมายของแผนจังหวัดเมื่อเกี่ยวข้องกับระดับโรงเรียน (source = \"แผนจังหวัด\") ถ้าไม่พอให้เสนอใหม่ (source = \"ใหม่\")",
-(I.prov?
-"- ความสอดคล้องกับแผนจังหวัด: วิสัยทัศน์ต้องสะท้อนแนวคิดหลักของวิสัยทัศน์จังหวัดในภาษาของโรงเรียน (ไม่คัดลอกทั้งประโยค) | ทุกหัวข้อแผนจังหวัดที่ผลวิเคราะห์ระบุว่า missing หรือ partial (ยกเว้น na) ต้องมีกลยุทธ์และตัวชี้วัดรองรับ | ใส่รหัสแผนจังหวัดที่สอดคล้องใน prov ของพันธกิจ เป้าประสงค์ กลยุทธ์ และตัวชี้วัดทุกรายการ (ใช้รหัสในวงเล็บเหลี่ยม เช่น \"E1\" ไม่ต้องมีวงเล็บ) | ถ้าปีเป้าหมายของโรงเรียนต่างจากปีของจังหวัด ให้แนะนำใน advice"
-:"- ไม่มีแผนจังหวัด ให้ prov เป็น [] ทุกรายการ"),
+"- ตัวชี้วัด ทุกเป้าประสงค์ต้องมีอย่างน้อย 1 ตัว วัดได้ และมีค่าเป้าหมาย ใช้ข้อในช่อง R ก่อน (source = รหัส R) ใช้ค่าเป้าหมายของแผนจังหวัดหรือนโยบายเมื่อเกี่ยวข้องกับระดับโรงเรียน (source = \"แผนจังหวัด\" หรือ \"นโยบาย\") ถ้าไม่พอให้เสนอใหม่ (source = \"ใหม่\")",
+(refText(I)?
+"- ความสอดคล้องกับแผนและนโยบาย: วิสัยทัศน์ต้องสะท้อนแนวคิดหลักของวิสัยทัศน์จังหวัด (ถ้ามี) ในภาษาของโรงเรียน (ไม่คัดลอกทั้งประโยค) | ทุกหัวข้อที่ผลวิเคราะห์ระบุว่า missing หรือ partial (ยกเว้น na) ต้องมีกลยุทธ์และตัวชี้วัดรองรับ | ใส่รหัสแผน/นโยบายที่สอดคล้องใน prov ของพันธกิจ เป้าประสงค์ กลยุทธ์ และตัวชี้วัดทุกรายการ (ใช้รหัสในวงเล็บเหลี่ยมตามที่เขียนไว้ เช่น \"E1\" หรือ \"สพฐ.2\" ไม่ต้องมีวงเล็บ) | ถ้าปีเป้าหมายของโรงเรียนต่างจากปีของจังหวัด ให้แนะนำใน advice"
+:"- ไม่มีแผนหรือนโยบายที่ต้องสอดคล้อง ให้ prov เป็น [] ทุกรายการ"),
 "- risks นำจุดอ่อน/อุปสรรคจากผลวิเคราะห์มาวางแนวทางรับมือ",
 "- advice คือสิ่งที่ผู้ใช้ควรตรวจหรือเติมก่อนนำแผนไปใช้ 1-4 ข้อ",
 "- ห้ามแต่งข้อเท็จจริงเกี่ยวกับโรงเรียนที่ไม่มีในข้อมูล",
@@ -481,8 +527,8 @@ function planPrompt(I,A,extra){
 "ข้อมูล SOAR:",
 soarText(I),
 "",
-"แผนระดับจังหวัดที่ต้องสอดคล้อง:",
-(I.prov||"(ไม่มี)"),
+"แผนและนโยบายที่ต้องสอดคล้อง:",
+(refText(I)||"(ไม่มี)"),
 "",
 "ผลการวิเคราะห์ (JSON):",
 JSON.stringify(an),
@@ -511,7 +557,7 @@ function normAn(d,I){
     align_summary:str(d.align_summary),
     alignment:[]
   };
-  var PM={}; parseProv(I.prov).forEach(function(p){ PM[p.code]=p.label });
+  var PM={}; refListFrom(I).forEach(function(p){ PM[p.code]=p.label });
   var aseen={};
   out.alignment=arr(d.alignment).map(function(x){
     x=x||{}; var c=str(x.code).toUpperCase().replace(/^\[|\]$/g,"");
@@ -559,7 +605,7 @@ function renderAn(){
   if(AL.length){
     var tl={covered:0,partial:0,missing:0,na:0};
     AL.forEach(function(x){ if(tl[x.status]!=null) tl[x.status]++ });
-    h+='<div class="sec"><h3>ความสอดคล้องกับแผนจังหวัด</h3>';
+    h+='<div class="sec"><h3>ความสอดคล้องกับแผนและนโยบาย</h3>';
     h+='<div class="tally">'+["covered","partial","missing","na"].map(function(k){ return tl[k]?'<span class="pill '+ALS[k][1]+'">'+ALS[k][0]+' '+tl[k]+'</span>':'' }).join("")+'</div>';
     if(A.align_summary) h+='<p class="lead" style="margin-bottom:8px">'+esc(A.align_summary)+'</p>';
     var order={missing:0,partial:1,covered:2,na:3};
@@ -691,10 +737,10 @@ function renderPlan(){
 
   var PR=provRows(P);
   if(PR.length){
-    h+='<div class="sec"><h3>ความสอดคล้องกับแผนจังหวัด <em>จังหวัด → โรงเรียน</em></h3>';
+    h+='<div class="sec"><h3>ความสอดคล้องกับแผนและนโยบาย <em>แผน/นโยบาย → โรงเรียน</em></h3>';
     var miss=PR.filter(function(r){return r.status==="missing"||r.status==="partial"});
     h+='<div class="tally">'+["covered","partial","missing","na"].map(function(k){ var n=PR.filter(function(r){return r.status===k}).length; return n?'<span class="pill '+ALS[k][1]+'">'+ALS[k][0]+' '+n+'</span>':'' }).join("")+'</div>';
-    h+='<div class="twrap"><table class="al"><tr><th>หัวข้อแผนจังหวัด</th><th>พันธกิจ / เป้าประสงค์</th><th>กลยุทธ์</th><th>ตัวชี้วัด</th><th>สถานะ</th></tr>';
+    h+='<div class="twrap"><table class="al"><tr><th>แผน / นโยบาย</th><th>พันธกิจ / เป้าประสงค์</th><th>กลยุทธ์</th><th>ตัวชี้วัด</th><th>สถานะ</th></tr>';
     PR.forEach(function(r){
       h+='<tr><td>'+pchip(r.code)+' '+esc(r.label)+'</td>';
       h+='<td>'+(r.m.length||r.g.length?r.m.map(function(n){return 'พ.'+n}).concat(r.g.map(function(n){return 'ป.'+n})).join(", "):'<span class="miss">—</span>')+'</td>';
@@ -703,7 +749,7 @@ function renderPlan(){
       h+='<td>'+pill(ALS,r.status)+'</td></tr>';
     });
     h+='</table></div>';
-    if(miss.length) h+='<p class="why" style="margin-top:8px"><b>ยังรองรับไม่ครบ</b> '+miss.map(function(r){return "จว."+esc(r.code)}).join(", ")+' — สอดคล้องครบเมื่อมีทั้งกลยุทธ์และตัวชี้วัดรองรับ</p>';
+    if(miss.length) h+='<p class="why" style="margin-top:8px"><b>ยังรองรับไม่ครบ</b> '+miss.map(function(r){return esc(refLabel(r.code))}).join(", ")+' — สอดคล้องครบเมื่อมีทั้งกลยุทธ์และตัวชี้วัดรองรับ</p>';
     h+='</div>';
   }
 
@@ -721,7 +767,7 @@ function renderPlan(){
 function provRows(P){
   var na={}; if(state.analysis) arr(state.analysis.alignment).forEach(function(x){ if(x.status==="na") na[x.code]=1 });
   function has(x,c){ return arr(x.prov).indexOf(c)>=0 }
-  return parseProv(val("prov")).map(function(p){
+  return refList().map(function(p){
     var c=p.code, r={code:c,label:p.label,m:[],g:[],s:[],k:[]};
     P.missions.forEach(function(x,i){ if(has(x,c)) r.m.push(i+1) });
     P.goals.forEach(function(x,i){ if(has(x,c)) r.g.push(i+1) });
@@ -751,12 +797,14 @@ function counts(){
   var P=parseProv(val("prov"));
   el("c-p").textContent=P.length+" หัวข้อ";
   var first=(val("prov").split(/\r?\n/).filter(function(x){return x.trim()})[0]||"").trim();
-  el("prov-name").textContent=!val("prov").trim()?"ยังไม่ได้ใส่แผน":(/^\[/.test(first)?"แผนที่ใส่ไว้":first.slice(0,60));
+  el("prov-name").textContent=!val("prov").trim()?"ยังไม่ได้ใส่แผน":(/^\[/.test(first)?"แผนที่ใส่ไว้":first.split(" · ")[0].slice(0,40));
   el("prov-sum").innerHTML=P.map(function(p){return pchip(p.code,p.label)}).join("");
+  var np=0; POL.forEach(function(Q){ var n=lines(Q.k).length; np+=n; el("c-"+Q.k).textContent=n?n+" ข้อ":"" });
+  el("c-pol").textContent=np?np+" ข้อ":"ไม่บังคับ";
 }
 function save(){
   try{
-    localStorage.setItem(LS,JSON.stringify({school:val("school"),year:val("year"),ctx:val("ctx"),s:val("s"),o:val("o"),a:val("a"),r:val("r"),extra:val("extra"),prov:val("prov"),
+    localStorage.setItem(LS,JSON.stringify({school:val("school"),year:val("year"),ctx:val("ctx"),s:val("s"),o:val("o"),a:val("a"),r:val("r"),extra:val("extra"),prov:val("prov"),moe:val("moe"),obec:val("obec"),esa:val("esa"),
       analysis:state.analysis,anKey:state.anKey,plan:state.plan,planKey:state.planKey,demo:state.demo}));
   }catch(e){}
 }
@@ -875,11 +923,11 @@ function md(){
     L.push(""); L.push("## ผลการวิเคราะห์"); L.push(""); L.push(A.overview); L.push("");
     if(A.pairs.length){ L.push("**คู่ S × O ที่ใช้ทำกลยุทธ์**"); A.pairs.forEach(function(p){ L.push("- "+p.s+" × "+p.o+" — "+p.reason) }); L.push("") }
     if(A.gaps.length){ L.push("**ช่องว่าง**"); A.gaps.forEach(function(g){ L.push("- "+g) }); L.push("") }
-    if(A.align_summary){ L.push("**ความสอดคล้องกับแผนจังหวัด** "+A.align_summary); L.push("") }
+    if(A.align_summary){ L.push("**ความสอดคล้องกับแผนและนโยบาย** "+A.align_summary); L.push("") }
   }
   if(P){
     L.push("## วิสัยทัศน์"); L.push(""); L.push("“"+P.vision+"”"); L.push("");
-    function pj(x){ return arr(x.prov).length?" [จว. "+x.prov.join(", ")+"]":"" }
+    function pj(x){ return arr(x.prov).length?" ["+x.prov.map(refLabel).join(", ")+"]":"" }
     L.push("## พันธกิจ"); L.push(""); P.missions.forEach(function(m,i){ L.push((i+1)+". "+m.text+pj(m)) }); L.push("");
     L.push("## เป้าประสงค์"); L.push(""); P.goals.forEach(function(g,i){ L.push((i+1)+". "+g.text+pj(g)) }); L.push("");
     L.push("## กลยุทธ์"); L.push("");
@@ -893,9 +941,9 @@ function md(){
     P.kpis.forEach(function(k){ L.push("| "+(k.goal||"-")+" | "+k.text+" | "+(k.target||"-")+" |") });
     var PR=provRows(P);
     if(PR.length){
-      L.push(""); L.push("## ความสอดคล้องกับแผนจังหวัด"); L.push("");
-      L.push("| หัวข้อแผนจังหวัด | กลยุทธ์ | ตัวชี้วัด | สถานะ |"); L.push("|---|---|---|---|");
-      PR.forEach(function(r){ L.push("| "+r.code+" "+r.label+" | "+(r.s.length?r.s.join(", "):"—")+" | "+(r.k.length?r.k.join("; "):"—")+" | "+ALS[r.status][0]+" |") });
+      L.push(""); L.push("## ความสอดคล้องกับแผนและนโยบาย"); L.push("");
+      L.push("| แผน / นโยบาย | กลยุทธ์ | ตัวชี้วัด | สถานะ |"); L.push("|---|---|---|---|");
+      PR.forEach(function(r){ L.push("| "+refLabel(r.code)+" "+r.label+" | "+(r.s.length?r.s.join(", "):"—")+" | "+(r.k.length?r.k.join("; "):"—")+" | "+ALS[r.status][0]+" |") });
     }
     if(P.risks.length){
       L.push(""); L.push("## ทะเบียนความเสี่ยง"); L.push("");
@@ -1037,7 +1085,7 @@ var DEMO_PLAN={
 };
 
 function setFields(d){
-  ["school","year","ctx","s","o","a","r","extra"].forEach(function(k){ el(F[k]).value=d[k]||"" });
+  ["school","year","ctx","s","o","a","r","extra","moe","obec","esa"].forEach(function(k){ el(F[k]).value=d[k]||"" });
 }
 function loadDemo(){
   setFields(DEMO); el(F.prov).value=PROV_TSQM;
