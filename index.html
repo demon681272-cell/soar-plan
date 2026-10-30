@@ -335,7 +335,7 @@ footer{max-width:1240px;margin:0 auto;padding:6px 16px 0;font-size:12px;color:va
             <h2>สร้างแผนกลยุทธ์</h2>
             <div class="desc">AI เขียนวิสัยทัศน์ พันธกิจ เป้าประสงค์ กลยุทธ์ และตัวชี้วัด จากผลวิเคราะห์ในขั้นที่ 1 โดยอ้างรหัสแผนจังหวัดและนโยบายทุกจุด</div>
           </div>
-          <div class="acts"><button class="btn primary" id="go-plan" data-act="plan" disabled>สร้างแผนกลยุทธ์</button></div>
+          <div class="acts"><button class="btn primary" id="go-plan" data-act="plan" disabled>สร้างแผนกลยุทธ์</button><button class="btn" id="b-docx" data-act="docx" disabled title="เติมผลลงไฟล์แบบฟอร์มแผนพัฒนาโรงเรียนมัธยมศึกษา สพม.พิษณุโลก อุตรดิตถ์">ดาวน์โหลด Word ตามแบบฟอร์ม</button></div>
         </div>
         <div class="extra">
           <label for="ta-extra" class="lbl">ข้อมูลเพิ่มเติม / คำตอบต่อคำถามของ AI (ไม่บังคับ)</label>
@@ -354,6 +354,7 @@ footer{max-width:1240px;margin:0 auto;padding:6px 16px 0;font-size:12px;color:va
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 (function(){
 "use strict";
@@ -398,6 +399,34 @@ var PROV_TSQM=[
 "[LS] ผู้เรียน ด้านทักษะ (S): ทักษะชีวิตและการทำงานร่วมกับผู้อื่น — รับผิดชอบตนเอง ตัดสินใจเหมาะสม สื่อสารเชิงบวกและรับฟัง ทำงานเป็นทีมตามบทบาท",
 "[LK] ผู้เรียน ด้านความรู้ (K): คะแนนเป้าหมาย — RT ป.1 75.00 (กลุ่ม รร.TSQM-A ปี 2568 ได้ 78.72) | NT ป.3 70.00 (ปี 2568 ได้ 57.81) | O-NET ป.6 รวม 50.00 (ปี 2568 ได้ 51.95) | O-NET ม.3 รวม 50.00 (ประถมศึกษา/ขยายโอกาส) | PISA (ยังไม่กำหนดค่าเป้าหมาย) | พัฒนาการเด็กปฐมวัยองค์รวม 90.00"
 ].join("\n");
+/* v2: add WSA 8 measures and Hub goals (from the สพม. school development plan template) */
+var PROV_V1=PROV_TSQM;
+(function(){
+  var L=PROV_V1.split("\n");
+  var W=[
+"[W11] WSA 1.1 การตั้งเป้าหมายการพัฒนา (Goal) — ใช้ข้อมูลสภาพปัจจุบัน ปัญหา ความต้องการ และศักยภาพ ร่วมกับการมีส่วนร่วมของผู้เกี่ยวข้อง กำหนดเป้าหมายที่มุ่งผลลัพธ์ผู้เรียน มีตัวชี้วัด ข้อมูลฐาน ค่าเป้าหมาย ระยะเวลา ถ่ายทอดสู่แผนงานและการปฏิบัติ พร้อมติดตามทบทวน",
+"[W12] WSA 1.2 ระบบสารสนเทศคุณภาพ (Info) — รวบรวม ตรวจสอบ จัดเก็บ วิเคราะห์ และใช้ข้อมูลที่ถูกต้อง ครบถ้วน เป็นปัจจุบัน เข้าถึงได้ตามบทบาท รักษาความลับ และใช้ตัดสินใจ",
+"[W13] WSA 1.3 ระบบดูแลช่วยเหลือนักเรียน (Student Care) — รู้จักนักเรียนรายบุคคล คัดกรอง ส่งเสริม ป้องกันและแก้ไข ช่วยเหลือและส่งต่อ ติดตามผล ร่วมกับครอบครัวและหน่วยงาน ให้ผู้เรียนปลอดภัยและคงอยู่ในระบบ",
+"[W14] WSA 1.4 การประเมินผลเชิงพัฒนา (DE) — ผสานการประเมินกับการพัฒนาแนวทางใหม่ ร่วมกำหนดคำถามประเมิน เก็บและตีความหลักฐาน แล้วใช้ปรับแนวทางระหว่างดำเนินงาน",
+"[W21] WSA 2.1 นวัตกรรมการจัดการเรียนรู้ (Classroom) — ออกแบบหรือปรับวิธีสอน สื่อ ภาระงาน ให้ผู้เรียนคิด ลงมือทำ นำความรู้ไปใช้ ตอบสนองความแตกต่าง และใช้หลักฐานปรับปรุงนวัตกรรม",
+"[W22] WSA 2.2 การประเมินเพื่อพัฒนาการเรียนรู้ (Formative Assessment) — เก็บหลักฐานระหว่างเรียน ให้ข้อมูลย้อนกลับทันท่วงที ผู้เรียนประเมินตนเองและเพื่อนตามเกณฑ์ร่วม",
+"[W31] WSA 3.1 ชุมชนการเรียนรู้ทางวิชาชีพที่มีคุณภาพ (PLC) — ผู้บริหารและครูเรียนรู้ร่วมกันจากปัญหาและหลักฐานการเรียนรู้ของผู้เรียน ออกแบบ ทดลอง สะท้อนผล และปรับการปฏิบัติ",
+"[W41] WSA 4.1 เครือข่ายโรงเรียนคุณภาพ (Network) — ร่วมมือกับโรงเรียนอื่นและภาคี มีเป้าหมายร่วม บทบาท และกิจกรรมพัฒนาร่วมกัน พร้อมติดตามทบทวน"];
+  var H=[
+"[H1] โรงเรียนแกนนำ/Hub: ใช้กรอบ WSA — จัดการเรียนรู้ตามกรอบการพัฒนาโรงเรียนเชิงระบบ (WSA) ตั้งแต่ร้อยละ 80 ของชั้นเรียนทั้งหมด",
+"[H2] โรงเรียนแกนนำ/Hub: ผู้บริหารได้รับการยอมรับ — ผู้บริหารสถานศึกษาได้รับการยอมรับจากเครือข่ายโรงเรียน",
+"[H3] โรงเรียนแกนนำ/Hub: แนวปฏิบัติที่ดีและนวัตกรรม — มีแนวปฏิบัติที่ดี หรือนวัตกรรมการบริหาร การจัดการเรียนรู้ หรือการทำงานกับเครือข่าย",
+"[H4] โรงเรียนแกนนำ/Hub: ขยายผล — ขยายผลแนวปฏิบัติที่ดีกับโรงเรียนเครือข่าย โดยมีครูแกนนำเป็นโค้ช/วิทยากร"];
+  var out=[];
+  L.forEach(function(l){
+    if(/^\[LA1\]/.test(l)) l=l.replace("EF, Self-esteem, Self-control","ทักษะการนำตนเอง (Self-directed), EF, Self-esteem, Self-control");
+    if(/^\[LK\]/.test(l)) l+=" | แบบฟอร์มแผนพัฒนาโรงเรียนมัธยม สพม.: O-NET ม.3 และ ม.6 (รวม) สูงกว่าค่าเฉลี่ยระดับประเทศ";
+    out.push(l);
+    if(/^\[G1\]/.test(l)) out=out.concat(W);
+    if(/^\[T2\]/.test(l)) out=out.concat(H);
+  });
+  PROV_TSQM=out.join("\n");
+})();
 function parseProv(t){
   var out=[], seen={};
   String(t||"").split(/\r?\n/).forEach(function(l){
@@ -506,13 +535,15 @@ function planPrompt(I,A,extra){
 "- วิสัยทัศน์ 1 ประโยค มีกรอบเวลา (ปีเป้าหมาย) และครอบคลุมภาพฝันทุกท่อน ห้ามแค่เอาข้อความในช่อง A มาต่อกัน",
 "- พันธกิจ 3-6 ข้อ ขึ้นต้นด้วยคำกริยา (พัฒนา ส่งเสริม สร้าง ยกระดับ ฯลฯ) บอกว่าโรงเรียนจะทำอะไร",
 "- เป้าประสงค์ บอกผลที่เกิดกับใคร (ผู้เรียน ครู ผู้บริหาร สถานศึกษา) อย่างน้อย 1 ข้อต่อพันธกิจ อ้างเลขพันธกิจใน mission",
-"- กลยุทธ์ 3-7 ข้อ แต่ละข้อต้องมาจากคู่ S×O ที่มีจริง (อ้างรหัสใน pair) อ้างเลขเป้าประสงค์ที่รองรับใน goals มีเหตุผล และโครงการ/กิจกรรมหลัก 1-3 รายการ",
+"- ถ้าแผนจังหวัดมีรหัสกลุ่มเหล่านี้ ให้มีเป้าประสงค์ครอบคลุมทั้ง 5 ด้านของแบบฟอร์มแผนพัฒนาโรงเรียน: (1) พัฒนาโรงเรียนเชิงระบบ = รหัส W (WSA) (2) ผลลัพธ์ผู้เรียน VASK = รหัส L (3) ผู้บริหาร = รหัส E (4) ครู = รหัส T (5) โรงเรียนแกนนำ/Hub = รหัส H",
+"- กลยุทธ์ 4-8 ข้อ แต่ละข้อต้องมาจากคู่ S×O ที่มีจริง (อ้างรหัสใน pair) อ้างเลขเป้าประสงค์ที่รองรับใน goals มีเหตุผล และโครงการ/กิจกรรมหลัก 1-3 รายการ",
 "- ตัวชี้วัด ทุกเป้าประสงค์ต้องมีอย่างน้อย 1 ตัว วัดได้ และมีค่าเป้าหมาย ใช้ข้อในช่อง R ก่อน (source = รหัส R) ใช้ค่าเป้าหมายของแผนจังหวัดหรือนโยบายเมื่อเกี่ยวข้องกับระดับโรงเรียน (source = \"แผนจังหวัด\" หรือ \"นโยบาย\") ถ้าไม่พอให้เสนอใหม่ (source = \"ใหม่\")",
 (refText(I)?
 "- ความสอดคล้องกับแผนและนโยบาย: วิสัยทัศน์ต้องสะท้อนแนวคิดหลักของวิสัยทัศน์จังหวัด (ถ้ามี) ในภาษาของโรงเรียน (ไม่คัดลอกทั้งประโยค) | ทุกหัวข้อที่ผลวิเคราะห์ระบุว่า missing หรือ partial (ยกเว้น na) ต้องมีกลยุทธ์และตัวชี้วัดรองรับ | ใส่รหัสแผน/นโยบายที่สอดคล้องใน prov ของพันธกิจ เป้าประสงค์ กลยุทธ์ และตัวชี้วัดทุกรายการ (ใช้รหัสในวงเล็บเหลี่ยมตามที่เขียนไว้ เช่น \"E1\" หรือ \"สพฐ.2\" ไม่ต้องมีวงเล็บ) | ถ้าปีเป้าหมายของโรงเรียนต่างจากปีของจังหวัด ให้แนะนำใน advice"
 :"- ไม่มีแผนหรือนโยบายที่ต้องสอดคล้อง ให้ prov เป็น [] ทุกรายการ"),
 "- risks นำจุดอ่อน/อุปสรรคจากผลวิเคราะห์มาวางแนวทางรับมือ",
 "- advice คือสิ่งที่ผู้ใช้ควรตรวจหรือเติมก่อนนำแผนไปใช้ 1-4 ข้อ",
+"- form คือข้อความสำหรับกรอกแบบฟอร์มแผนพัฒนาโรงเรียน: rationale = หลักการและเหตุผล 1-2 ย่อหน้า (บริบทผู้เรียน สภาพปัญหา ความจำเป็น จากผลวิเคราะห์และบริบท ไม่ใช่การคัดลอกข้อ SOAR มาเรียง) | capital_economic, capital_culture, capital_environment, capital_wisdom = ต้นทุนของโรงเรียนด้านเศรษฐกิจ ประเพณีวัฒนธรรม สิ่งแวดล้อม ปราชญ์ชุมชน/ภูมิปัญญา พร้อมแนวทางเชื่อมกับการเรียนรู้ ด้านละ 1-3 ประโยค จากข้อ S/O และบริบท ถ้าไม่มีข้อมูลด้านนั้นให้ \"\" | outputs = ผลผลิตที่ตรวจนับหรือแสดงหลักฐานได้ 3-4 รายการ เชื่อมกับโครงการ",
 "- ห้ามแต่งข้อเท็จจริงเกี่ยวกับโรงเรียนที่ไม่มีในข้อมูล",
 "",
 "ตอบเป็น JSON object เดียวเท่านั้น ตามโครงสร้างนี้:",
@@ -522,7 +553,8 @@ function planPrompt(I,A,extra){
 ' "strategies":[{"title":"...","pair":["S1","O1"],"goals":[1],"prov":["T1","E3"],"why":"...","projects":["..."]}],',
 ' "kpis":[{"goal":1,"text":"...","target":"...","source":"R1","prov":["LK"]}],',
 ' "risks":[{"text":"...","response":"..."}],',
-' "advice":["..."]}',
+' "advice":["..."],',
+' "form":{"rationale":"...","capital_economic":"...","capital_culture":"...","capital_environment":"...","capital_wisdom":"...","outputs":[{"output":"...","unit":"...","due":"เดือน/ปี","evidence":"..."}]}}',
 "",
 "ข้อมูล SOAR:",
 soarText(I),
@@ -577,8 +609,14 @@ function normPlan(d){
     strategies:arr(d.strategies).map(function(s){s=s||{};return {title:str(s.title),pair:arr(s.pair).map(function(c){return str(c).toUpperCase()}).filter(Boolean),goals:arr(s.goals).map(Number).filter(function(n){return n>0}),prov:pv(s),why:str(s.why),projects:arr(s.projects).map(str).filter(Boolean)}}).filter(function(s){return s.title}),
     kpis:arr(d.kpis).map(function(k){k=k||{};return {goal:Number(k.goal)||0,text:str(k.text),target:str(k.target),source:str(k.source),prov:pv(k)}}).filter(function(k){return k.text}),
     risks:arr(d.risks).map(function(r){r=r||{};return {text:str(r.text),response:str(r.response)}}).filter(function(r){return r.text}),
-    advice:arr(d.advice).map(str).filter(Boolean)
+    advice:arr(d.advice).map(str).filter(Boolean),
+    form:null
   };
+  var f=d.form;
+  if(f&&typeof f==="object"&&!Array.isArray(f)){
+    out.form={rationale:str(f.rationale),capital_economic:str(f.capital_economic),capital_culture:str(f.capital_culture),capital_environment:str(f.capital_environment),capital_wisdom:str(f.capital_wisdom),
+      outputs:arr(f.outputs).map(function(o){o=o||{};return {output:str(o.output),unit:str(o.unit),due:str(o.due),evidence:str(o.evidence)}}).filter(function(o){return o.output})};
+  }
   if(!out.vision&&!out.strategies.length) throw {code:"invalid_json"};
   return out;
 }
@@ -758,6 +796,22 @@ function renderPlan(){
     P.risks.forEach(function(r){ h+='<tr><td>'+esc(r.text)+'</td><td>'+esc(r.response)+'</td></tr>' });
     h+='</table></div></div>';
   }
+  var FM=P.form;
+  if(FM){
+    if(FM.rationale) h+='<div class="sec"><h3>หลักการและเหตุผล <em>สำหรับแบบฟอร์ม</em></h3><p class="lead" style="white-space:pre-line">'+esc(FM.rationale)+'</p></div>';
+    var caps=[["capital_economic","ด้านเศรษฐกิจ"],["capital_culture","ด้านประเพณีวัฒนธรรม"],["capital_environment","ด้านสิ่งแวดล้อม"],["capital_wisdom","ด้านปราชญ์ชุมชน/ภูมิปัญญา"]].filter(function(c){return FM[c[0]]});
+    if(caps.length){
+      h+='<div class="sec"><h3>ต้นทุนของโรงเรียน <em>สำหรับแบบฟอร์ม</em></h3>';
+      caps.forEach(function(c){ h+='<p class="gt">'+c[1]+'</p><p class="lead" style="font-size:14px">'+esc(FM[c[0]])+'</p>' });
+      h+='</div>';
+    }
+    if(FM.outputs.length){
+      h+='<div class="sec"><h3>ผลผลิตที่คาดว่าจะได้</h3><div class="twrap"><table class="al"><tr><th>ผลผลิต</th><th>จำนวน/หน่วยนับ</th><th>กำหนดแล้วเสร็จ</th><th>หลักฐาน</th></tr>';
+      FM.outputs.forEach(function(o){ h+='<tr><td>'+esc(o.output)+'</td><td>'+esc(o.unit)+'</td><td>'+esc(o.due)+'</td><td>'+esc(o.evidence)+'</td></tr>' });
+      h+='</table></div></div>';
+    }
+  }
+
   if(P.advice.length){
     h+='<div class="sec"><div class="note"><b>ควรตรวจก่อนใช้</b><ul>'+P.advice.map(function(a){return '<li>'+esc(a)+'</li>'}).join("")+'</ul></div></div>';
   }
@@ -787,6 +841,7 @@ function syncButtons(){
   bp.textContent=(state.plan&&!state.demo)?"สร้างแผนใหม่":"สร้างแผนกลยุทธ์";
   ba.disabled=off;
   bp.disabled=off||!state.analysis;
+  el("b-docx").disabled=!state.plan||!!busy;
 }
 function updateStale(){
   el("an-stale").hidden=!(state.analysis&&!state.demo&&state.anKey!==inputKey());
@@ -969,7 +1024,7 @@ function copy(t){
 
 /* ---------- example (pre-written, marked as example) ---------- */
 var DEMO={
-  school:"โรงเรียนมัธยมศึกษาขนาดกลาง (ตัวอย่าง)", year:"2572", ctx:"", extra:"",
+  school:"โรงเรียนมัธยมศึกษาขนาดกลาง (ตัวอย่าง)", year:"2569", ctx:"", extra:"",
   s:"ครูมีทักษะ Active Learning\nชุมชนมีภูมิปัญญาท้องถิ่นเข้มแข็ง\nมีเครือข่ายศิษย์เก่า",
   o:"นโยบายหลักสูตรฐานสมรรถนะ\nแหล่งเรียนรู้ดิจิทัลแบบเปิด\nมหาวิทยาลัยในพื้นที่พร้อมเป็นภาคี",
   a:"มีสมรรถนะ\nรักษ์ถิ่น\nก้าวทันโลกดิจิทัล",
@@ -1035,7 +1090,7 @@ var DEMO_AN={
   ]
 };
 var DEMO_PLAN={
-  vision:"ภายในปี 2572 โรงเรียนพัฒนาผู้เรียนให้มีสมรรถนะการคิดและการแก้ปัญหา รู้จักตนเองและมีเป้าหมายชีวิต รักษ์ถิ่น และใช้เทคโนโลยีดิจิทัลอย่างรู้เท่าทัน ในสภาพแวดล้อมที่ปลอดภัยทั้งกายและใจ ด้วยพลังของผู้บริหาร ครูมืออาชีพ ชุมชน และภาคีเครือข่าย",
+  vision:"ภายในปีการศึกษา 2569 โรงเรียนพัฒนาผู้เรียนให้มีสมรรถนะการคิดและการแก้ปัญหา รู้จักตนเองและมีเป้าหมายชีวิต รักษ์ถิ่น และใช้เทคโนโลยีดิจิทัลอย่างรู้เท่าทัน ในสภาพแวดล้อมที่ปลอดภัยทั้งกายและใจ ด้วยพลังของผู้บริหาร ครูมืออาชีพ ชุมชน และภาคีเครือข่าย",
   vision_why:"ครอบคลุมภาพฝันทั้งสามท่อน และเติมแนวคิดหลักของวิสัยทัศน์จังหวัด คือ ความปลอดภัยกายใจ การรู้จักตนเองและมีเป้าหมายชีวิต และการรวมพลังผู้บริหาร ครูแกนนำ และภาคีเชิงพื้นที่",
   missions:[
     {text:"พัฒนาการจัดการเรียนรู้ฐานสมรรถนะด้วยกระบวนการ Active Learning",refs:["A1","S1","O1"],prov:["T1","LK"]},
@@ -1046,31 +1101,36 @@ var DEMO_PLAN={
     {text:"พัฒนาผู้บริหารและครูแกนนำให้เป็นผู้นำการเรียนรู้ด้วยระบบนิเทศแบบโค้ชและ PLC",refs:["S1"],prov:["E1","E2","E3","T0","T2"]}
   ],
   goals:[
-    {text:"ผู้เรียนมีสมรรถนะการคิดขั้นสูงและการแก้ปัญหา และมีผลสัมฤทธิ์ตามเป้าหมายจังหวัด",mission:1,prov:["LK"]},
+    {text:"ผู้เรียนมีสมรรถนะการคิดขั้นสูงและการแก้ปัญหา และมีผลสัมฤทธิ์ตามเป้าหมายจังหวัด",mission:1,prov:["LK","W21","W22"]},
     {text:"ผู้เรียนเห็นคุณค่าและนำภูมิปัญญาท้องถิ่นไปสร้างโครงงานร่วมกับผู้อื่นได้",mission:2,prov:["LS"]},
     {text:"ผู้เรียนใช้เทคโนโลยีดิจิทัลเพื่อการเรียนรู้อย่างปลอดภัยและสร้างสรรค์",mission:3,prov:["PV"]},
-    {text:"สถานศึกษามีภาคีเครือข่ายที่ร่วมจัดการศึกษาอย่างต่อเนื่อง",mission:4,prov:["PV","E3"]},
-    {text:"ผู้เรียนมีวินัย ซื่อสัตย์ จัดการตนเองและอารมณ์ได้ และมีเป้าหมายชีวิต",mission:5,prov:["LV","LA1","LA2"]},
-    {text:"ผู้บริหารและครูแกนนำเป็นผู้นำการเรียนรู้ในบทบาทโค้ช",mission:6,prov:["E1","E2","T0","T2"]}
+    {text:"สถานศึกษามีภาคีเครือข่ายที่ร่วมจัดการศึกษาอย่างต่อเนื่อง",mission:4,prov:["PV","E3","W41","H4"]},
+    {text:"ผู้เรียนมีวินัย ซื่อสัตย์ จัดการตนเองและอารมณ์ได้ และมีเป้าหมายชีวิต",mission:5,prov:["LV","LA1","LA2","W13"]},
+    {text:"ผู้บริหารและครูแกนนำเป็นผู้นำการเรียนรู้ในบทบาทโค้ช",mission:6,prov:["E1","E2","T0","T2","W11","W31"]}
   ],
   strategies:[
-    {title:"ยกระดับการจัดการเรียนรู้ฐานสมรรถนะผ่าน PLC และ Active Learning",pair:["S1","O1"],goals:[1],prov:["T1","E3","LK"],why:"ใช้ครูที่มีทักษะอยู่แล้วเป็นแกนนำขยายผลทั้งโรงเรียน ลดความเสี่ยงที่ทักษะกระจุกอยู่ที่ครูไม่กี่คน",projects:["PLC ออกแบบหน่วยการเรียนรู้ฐานสมรรถนะ","ยกระดับผลสัมฤทธิ์ O-NET ม.3 รายกลุ่มสาระ"]},
+    {title:"ยกระดับการจัดการเรียนรู้ฐานสมรรถนะผ่าน PLC และ Active Learning",pair:["S1","O1"],goals:[1],prov:["T1","E3","LK","W21","W22"],why:"ใช้ครูที่มีทักษะอยู่แล้วเป็นแกนนำขยายผลทั้งโรงเรียน ลดความเสี่ยงที่ทักษะกระจุกอยู่ที่ครูไม่กี่คน",projects:["PLC ออกแบบหน่วยการเรียนรู้ฐานสมรรถนะ","ยกระดับผลสัมฤทธิ์ O-NET ม.3 รายกลุ่มสาระ"]},
     {title:"พัฒนาหลักสูตรท้องถิ่นและโครงงานฐานชุมชนร่วมกับมหาวิทยาลัย",pair:["S2","O3"],goals:[2,4],prov:["PV","LS"],why:"มหาวิทยาลัยช่วยแปลงภูมิปัญญาเป็นหน่วยการเรียนรู้ ชุมชนเป็นทั้งวิทยากรและพื้นที่ทำโครงงาน",projects:["ปราชญ์ชาวบ้านสู่ห้องเรียน","โครงงานฐานชุมชนทุกระดับชั้น"]},
     {title:"ส่งเสริมการเรียนรู้ด้วยแหล่งเรียนรู้ดิจิทัลแบบเปิด",pair:["S1","O2"],goals:[3,1],prov:["T1","T2"],why:"ครูนำสื่อเปิดเข้าสู่กิจกรรม Active Learning ได้โดยไม่ต้องผลิตเอง พร้อมจัดอุปกรณ์ให้ผู้เรียนที่ขาดแคลน",projects:["คลังสื่อดิจิทัลแบบเปิดรายกลุ่มสาระ","ระบบยืมอุปกรณ์สำหรับผู้เรียนที่ขาดแคลน"]},
-    {title:"สร้างภาคีเครือข่ายศิษย์เก่าและสถาบันอุดมศึกษาอย่างเป็นระบบ",pair:["S3","O3"],goals:[4],prov:["PV","E3"],why:"ทำข้อตกลงความร่วมมือเป็นลายลักษณ์อักษร เพื่อไม่ให้ความร่วมมือขึ้นกับตัวบุคคล",projects:["จัดทำ MOU กับมหาวิทยาลัยในพื้นที่","ศิษย์เก่าพี่เลี้ยงอาชีพ"]},
-    {title:"พัฒนา EF ทักษะชีวิต และสุขภาวะผ่านการเรียนรู้เชิงรุกและระบบดูแลช่วยเหลือ",pair:["S1","O1"],goals:[5,2],prov:["LV","LA1","LA2","LS"],why:"ใช้ PBL และ CBL ที่ครูถนัดอยู่แล้วฝึกการตั้งเป้าหมาย การกำกับตนเอง และการทำงานเป็นทีม ควบคู่กับห้องเรียนจิตวิทยาเชิงบวก",projects:["ห้องเรียนจิตวิทยาเชิงบวก","ครูที่ปรึกษาโค้ชเป้าหมายชีวิตรายบุคคล"]},
-    {title:"นิเทศภายในแบบโค้ชและ PLC โดยผู้บริหารและครูแกนนำ",pair:["S1","O3"],goals:[6,1],prov:["E1","E2","E3","T0","T2"],why:"ผู้บริหารเข้าชั้นเรียนในบทบาทโค้ช และร่วมกับมหาวิทยาลัยพัฒนาครูแกนนำให้ถึงร้อยละ 20 ตามเกณฑ์จังหวัด",projects:["นิเทศในชั้นเรียนแบบ Coaching โดยผู้บริหาร","ยกระดับครูแกนนำร่วมกับมหาวิทยาลัย"]}
+    {title:"สร้างภาคีเครือข่ายศิษย์เก่าและสถาบันอุดมศึกษาอย่างเป็นระบบ",pair:["S3","O3"],goals:[4],prov:["PV","E3","W41","H4"],why:"ทำข้อตกลงความร่วมมือเป็นลายลักษณ์อักษร เพื่อไม่ให้ความร่วมมือขึ้นกับตัวบุคคล",projects:["จัดทำ MOU กับมหาวิทยาลัยในพื้นที่","ศิษย์เก่าพี่เลี้ยงอาชีพ"]},
+    {title:"พัฒนา EF ทักษะชีวิต และสุขภาวะผ่านการเรียนรู้เชิงรุกและระบบดูแลช่วยเหลือ",pair:["S1","O1"],goals:[5,2],prov:["LV","LA1","LA2","LS","W13"],why:"ใช้ PBL และ CBL ที่ครูถนัดอยู่แล้วฝึกการตั้งเป้าหมาย การกำกับตนเอง และการทำงานเป็นทีม ควบคู่กับห้องเรียนจิตวิทยาเชิงบวก",projects:["ห้องเรียนจิตวิทยาเชิงบวก","ครูที่ปรึกษาโค้ชเป้าหมายชีวิตรายบุคคล"]},
+    {title:"นิเทศภายในแบบโค้ชและ PLC โดยผู้บริหารและครูแกนนำ",pair:["S1","O3"],goals:[6,1],prov:["E1","E2","E3","T0","T2","W11","W31","H3"],why:"ผู้บริหารเข้าชั้นเรียนในบทบาทโค้ช และร่วมกับมหาวิทยาลัยพัฒนาครูแกนนำให้ถึงร้อยละ 20 ตามเกณฑ์จังหวัด",projects:["นิเทศในชั้นเรียนแบบ Coaching โดยผู้บริหาร","ยกระดับครูแกนนำร่วมกับมหาวิทยาลัย"]}
   ],
   kpis:[
     {goal:1,text:"ร้อยละของผู้เรียนที่ผ่านเกณฑ์การประเมินสมรรถนะ",target:"≥ 80%",source:"R1",prov:[]},
-    {goal:1,text:"คะแนนเฉลี่ย O-NET ม.3 (รวม)",target:"≥ 50.00",source:"แผนจังหวัด",prov:["LK"]},
+    {goal:1,text:"คะแนนเฉลี่ย O-NET ม.3 (รวม)",target:"สูงกว่าค่าเฉลี่ยระดับประเทศ",source:"แผนจังหวัด",prov:["LK"]},
+    {goal:1,text:"คะแนนเฉลี่ย O-NET ม.6 (รวม)",target:"สูงกว่าค่าเฉลี่ยระดับประเทศ",source:"แผนจังหวัด",prov:["LK"]},
+    {goal:1,text:"ร้อยละของชั้นเรียนที่ใช้การประเมินเพื่อพัฒนาการเรียนรู้ (Formative Assessment)",target:"≥ 80%",source:"ใหม่",prov:["W22","H1"]},
     {goal:2,text:"จำนวนระดับชั้นที่มีโครงงานฐานชุมชนผ่านเกณฑ์ระดับดีขึ้นไป",target:"ครบทุกระดับชั้น",source:"R2",prov:["LS"]},
     {goal:3,text:"ร้อยละของผู้เรียนที่ผ่านการประเมินความฉลาดรู้ดิจิทัล",target:"≥ 75%",source:"ใหม่",prov:["PV"]},
     {goal:4,text:"จำนวนภาคีเครือข่ายที่มีข้อตกลงและกิจกรรมร่วมต่อเนื่อง",target:"≥ 3 ภาคีต่อปี",source:"ใหม่",prov:["PV","E3"]},
     {goal:5,text:"ร้อยละของผู้เรียนที่ผ่านการประเมินคุณลักษณะอันพึงประสงค์ระดับดีขึ้นไป",target:"≥ 90%",source:"ใหม่",prov:["LV"]},
     {goal:5,text:"ร้อยละของผู้เรียนที่ระบุเป้าหมายชีวิตและแผนพัฒนาตนเองได้",target:"≥ 80%",source:"ใหม่",prov:["LA1","LA2"]},
+    {goal:5,text:"ร้อยละของผู้เรียนที่ได้รับการคัดกรองและดูแลช่วยเหลือตามระบบ",target:"100%",source:"ใหม่",prov:["W13"]},
     {goal:6,text:"สัดส่วนครูแกนนำต่อครูทั้งหมด",target:"≥ 20%",source:"แผนจังหวัด",prov:["T0","T1","T2"]},
-    {goal:6,text:"ผู้บริหารนิเทศในชั้นเรียนแบบโค้ชครบทุกกลุ่มสาระ",target:"ทุกภาคเรียน",source:"ใหม่",prov:["E1","E2","E3"]}
+    {goal:6,text:"ผู้บริหารนิเทศในชั้นเรียนแบบโค้ชครบทุกกลุ่มสาระ",target:"ทุกภาคเรียน",source:"ใหม่",prov:["E1","E2","E3"]},
+    {goal:6,text:"จำนวนวง PLC ที่ใช้หลักฐานการเรียนรู้ของผู้เรียนเป็นฐาน",target:"ทุกกลุ่มสาระ",source:"ใหม่",prov:["W31","W11"]},
+    {goal:4,text:"จำนวนโรงเรียนเครือข่ายที่ได้รับการขยายผลแนวปฏิบัติที่ดี",target:"≥ 2 โรงเรียน",source:"ใหม่",prov:["H4","W41"]}
   ],
   risks:[
     {text:"ผู้เรียนบางส่วนขาดอุปกรณ์ดิจิทัล",response:"สำรวจความพร้อมต้นปี จัดระบบยืมอุปกรณ์ และเปิดห้องคอมพิวเตอร์นอกเวลาเรียน"},
@@ -1079,9 +1139,22 @@ var DEMO_PLAN={
   ],
   advice:[
     "ตัวชี้วัดที่ระบุว่า “ใหม่” เป็นค่าเป้าหมายที่เสนอ ควรปรับตามข้อมูลฐานจริงของโรงเรียน",
-    "แผนจังหวัดตั้งเป้าถึงปีการศึกษา 2570 แต่แผนโรงเรียนตั้งปี 2572 ควรกำหนดค่าเป้าหมายรายปี ให้ปี 2570 ตรงกับเป้าจังหวัด",
+    "ควรใส่คะแนน O-NET ปี 2568 ของโรงเรียนเป็นข้อมูลฐานในแบบฟอร์ม เพื่อให้ค่าเป้าหมายวัดได้จริง",
     "PISA ยังไม่มีค่าเป้าหมายจากจังหวัด ควรติดตามประกาศเพิ่มเติม"
-  ]
+  ],
+  form:{
+    rationale:"ผู้เรียนของโรงเรียนอยู่ในชุมชนที่มีภูมิปัญญาท้องถิ่นและภาคีอุดมศึกษาใกล้เคียง ครูส่วนหนึ่งจัดการเรียนรู้เชิงรุกได้ดี แต่ทักษะยังกระจุกอยู่ที่ครูบางคน ผู้เรียนบางส่วนขาดอุปกรณ์ดิจิทัล และโรงเรียนยังไม่มีเป้าหมายและตัวชี้วัดด้านคุณลักษณะ การนำตนเอง และสุขภาวะที่ชัดเจน\nโรงเรียนจึงจัดทำแผนพัฒนานี้ตามกรอบการพัฒนาโรงเรียนเชิงระบบ (WSA) และแผน TSQM จังหวัดพิษณุโลก เพื่อยกระดับผลลัพธ์ผู้เรียนด้าน V-A-S-K พัฒนาผู้บริหารและครูแกนนำ และขยายผลสู่โรงเรียนเครือข่าย",
+    capital_economic:"",
+    capital_culture:"",
+    capital_environment:"",
+    capital_wisdom:"ชุมชนมีภูมิปัญญาท้องถิ่นและปราชญ์ชาวบ้านที่พร้อมร่วมจัดการเรียนรู้ ใช้เป็นวิทยากรและพื้นที่ทำโครงงานฐานชุมชนร่วมกับมหาวิทยาลัยในพื้นที่",
+    outputs:[
+      {output:"หน่วยการเรียนรู้ฐานสมรรถนะที่ผ่านกระบวนการ PLC",unit:"... หน่วย",due:"มี.ค. 2570",evidence:"แผนการจัดการเรียนรู้ บันทึก PLC"},
+      {output:"โครงงานฐานชุมชน",unit:"ทุกระดับชั้น",due:"ก.พ. 2570",evidence:"รายงานโครงงาน ผลประเมิน"},
+      {output:"ครูแกนนำที่เป็นโค้ช/วิทยากรได้",unit:"≥ ร้อยละ 20 ของครู",due:"มี.ค. 2570",evidence:"คำสั่งแต่งตั้ง บันทึกการโค้ช"},
+      {output:"แนวปฏิบัติที่ดีที่ขยายผลสู่เครือข่าย",unit:"1 เรื่อง",due:"มี.ค. 2570",evidence:"เอกสารแนวปฏิบัติ รายงานการขยายผล"}
+    ]
+  }
 };
 
 function setFields(d){
@@ -1095,12 +1168,114 @@ function loadDemo(){
 }
 function renderAll(){ counts(); renderAn(); renderPlan(); syncButtons(); updateStale() }
 
+/* ---------- Word export: fill the สพม. template's content controls by tag ---------- */
+var W_NS="http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+var PROJ_ROWS={LV:[3],LA1:[5],LA2:[6],LS:[8],LK:[10,11],T1:[17],T0:[18],T2:[18],E1:[21],E2:[22],E3:[23],H1:[25],H3:[25],H2:[26],H4:[26],W41:[26]};
+function groupOf(c){
+  c=String(c||"").toUpperCase();
+  if(/^W\d/.test(c)) return "wsa"; if(/^L[VASK]/.test(c)) return "students";
+  if(/^E\d/.test(c)) return "administrators"; if(/^T\d/.test(c)) return "teachers"; if(/^H\d/.test(c)) return "hub";
+  return "";
+}
+function stripYear(v){ return String(v||"").replace(/^\s*ภายใน\s*(ปีการศึกษา|ปี)\s*(พ\.ศ\.)?\s*\d{4}\s*/,"") }
+function formFields(){
+  var I=inputs(), P=state.plan, A=state.analysis, f=P.form||{}, yr=I.year||"2569", F={};
+  if(I.school) F.school_name=I.school.replace(/^โรงเรียน\s*/,"");
+  if(P.vision) F.vision=stripYear(P.vision);
+  F.rationale=f.rationale||[A&&A.overview, A&&A.gaps&&A.gaps.length?"ประเด็นที่ต้องพัฒนา ได้แก่ "+A.gaps.join(" "):""].filter(Boolean).join("\n");
+  ["capital_economic","capital_culture","capital_environment","capital_wisdom"].forEach(function(k){ if(f[k]) F[k]=f[k] });
+  var sec={wsa:[],students:[],administrators:[],teachers:[],hub:[]};
+  function inSec(list,s){ return arr(list).some(function(c){ return groupOf(c)===s }) }
+  P.goals.forEach(function(g,i){
+    var ks=P.kpis.filter(function(k){return k.goal===i+1});
+    Object.keys(sec).forEach(function(s){
+      var own=ks.filter(function(k){ return inSec(k.prov,s) });
+      if(own.length) sec[s].push({g:g,ks:own});
+      else if(inSec(g.prov,s)) sec[s].push({g:g,ks:ks});
+    });
+  });
+  Object.keys(sec).forEach(function(s){
+    if(!sec[s].length) return;
+    F["goal_"+s]=sec[s].map(function(x,n){
+      var t=(n+1)+". "+x.g.text;
+      x.ks.forEach(function(k){ t+="\n    ตัวชี้วัด: "+k.text+(k.target?" ค่าเป้าหมาย "+k.target:"")+" ระยะเวลา ปีการศึกษา "+yr });
+      return t;
+    }).join("\n");
+  });
+  var hs=P.strategies.filter(function(s){return arr(s.prov).some(function(c){return groupOf(c)==="hub"})});
+  if(hs.length) F.goal_hub=(F.goal_hub?F.goal_hub+"\n":"")+"แนวทางดำเนินงาน: "+hs.map(function(s){return s.title}).join(" / ");
+  var rows={};
+  P.strategies.forEach(function(s){
+    var rs={}; arr(s.prov).forEach(function(c){ arr(PROJ_ROWS[String(c).toUpperCase()]).forEach(function(r){ rs[r]=1 }) });
+    var names=s.projects.length?s.projects:[s.title];
+    Object.keys(rs).forEach(function(r){ rows[r]=rows[r]||[]; names.forEach(function(nm){ if(rows[r].indexOf(nm)<0) rows[r].push(nm) }) });
+  });
+  Object.keys(rows).forEach(function(r){ F["project_"+r+"_1"]=rows[r].map(function(nm){return "• "+nm}).join("\n") });
+  P.kpis.forEach(function(k){
+    if(!/O-?NET/i.test(k.text)||!k.target) return;
+    if(/ม\.?\s*3/.test(k.text)) F.school_m3_target=k.target;
+    if(/ม\.?\s*6/.test(k.text)) F.school_m6_target=k.target;
+  });
+  arr(f.outputs).slice(0,4).forEach(function(o,i){ ["output","unit","due","evidence"].forEach(function(k,j){ if(o[k]) F["output_"+(i+1)+"_"+j]=o[k] }) });
+  return F;
+}
+function firstChild(node,local){ var c=node.childNodes; for(var i=0;i<c.length;i++) if(c[i].localName===local) return c[i]; return null }
+function fillTemplateXml(xml,F){
+  var doc=new DOMParser().parseFromString(xml,"application/xml"), n=0;
+  var sdts=doc.getElementsByTagNameNS(W_NS,"sdt");
+  for(var i=0;i<sdts.length;i++){
+    var sdt=sdts[i], pr=firstChild(sdt,"sdtPr"), tagEl=pr&&firstChild(pr,"tag");
+    if(!tagEl) continue;
+    var tag=tagEl.getAttributeNS(W_NS,"val")||tagEl.getAttribute("w:val");
+    if(!F[tag]) continue;
+    var content=firstChild(sdt,"sdtContent"); if(!content) continue;
+    var r0=content.getElementsByTagNameNS(W_NS,"r")[0], rPr=r0&&firstChild(r0,"rPr");
+    rPr=rPr?rPr.cloneNode(true):null;
+    if(rPr) ["color","shd","highlight"].forEach(function(nm){ var x=rPr.getElementsByTagNameNS(W_NS,nm); while(x.length) x[0].parentNode.removeChild(x[0]) });
+    while(content.firstChild) content.removeChild(content.firstChild);
+    var run=doc.createElementNS(W_NS,"w:r"); if(rPr) run.appendChild(rPr);
+    String(F[tag]).split(/\r?\n/).forEach(function(line,j){
+      if(j) run.appendChild(doc.createElementNS(W_NS,"w:br"));
+      var t=doc.createElementNS(W_NS,"w:t"); t.setAttributeNS("http://www.w3.org/XML/1998/namespace","xml:space","preserve"); t.textContent=line; run.appendChild(t);
+    });
+    content.appendChild(run); n++;
+  }
+  return {xml:new XMLSerializer().serializeToString(doc),count:n};
+}
+async function saveBlob(blob,name){
+  if(mode==="claude"&&window.claude&&window.claude.use){
+    var dl=null; try{ dl=await window.claude.use("downloads") }catch(e){}
+    if(dl){ await dl.save({filename:name,data:blob}); return }
+  }
+  var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove() },3000);
+}
+async function exportDocx(){
+  if(!state.plan) return;
+  if(typeof JSZip==="undefined"){ toast("โหลดตัวสร้างไฟล์ Word ไม่สำเร็จ ลองรีเฟรชหน้า"); return }
+  var b=el("b-docx"), old=b.textContent; b.disabled=true; b.textContent="กำลังสร้างไฟล์…";
+  try{
+    var r=await fetch("template.docx",{cache:"no-store"}); if(!r.ok) throw new Error("template "+r.status);
+    var zip=await JSZip.loadAsync(await r.arrayBuffer());
+    var res=fillTemplateXml(await zip.file("word/document.xml").async("string"),formFields());
+    zip.file("word/document.xml",res.xml);
+    var blob=await zip.generateAsync({type:"blob",mimeType:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+    var nm="School-Development-Plan-"+((inputs().year||"2569").replace(/[^0-9]/g,"")||"2569")+".docx"; /* ASCII name: some browsers drop non-Latin names on blob downloads */
+    await saveBlob(blob,nm);
+    toast("สร้างไฟล์ Word แล้ว เติมให้ "+res.count+" ช่อง ที่เหลือกรอกต่อใน Word");
+  }catch(e){
+    console.error(e);
+    toast(e&&e.code==="declined"?"ยกเลิกการบันทึกไฟล์":"สร้างไฟล์ไม่สำเร็จ ลองใหม่อีกครั้ง");
+  }finally{ b.textContent=old; syncButtons() }
+}
+
 /* ---------- boot ---------- */
 var saved=null, old=null;
 try{ var raw=localStorage.getItem(LS); if(raw) saved=JSON.parse(raw) }catch(e){}
 if(!saved){ try{ var r1=localStorage.getItem(LS1); if(r1) old=JSON.parse(r1) }catch(e){} }
 if(saved){
-  setFields(saved); el(F.prov).value=(typeof saved.prov==="string")?saved.prov:PROV_TSQM;
+  setFields(saved); el(F.prov).value=(typeof saved.prov==="string"&&saved.prov!==PROV_V1)?saved.prov:PROV_TSQM;
   state.analysis=saved.analysis||null; state.anKey=saved.anKey||"";
   state.plan=saved.plan||null; state.planKey=saved.planKey||""; state.demo=!!saved.demo;
   /* saved results were normalised when created; keep them as they were analysed */
@@ -1151,6 +1326,7 @@ document.addEventListener("click",function(e){
   if(ap){ applyItem(ap,t.getAttribute("data-mode")); return }
   var a=t.getAttribute("data-act");
   if(a==="an") runAn();
+  else if(a==="docx") exportDocx();
   else if(a==="plan") runPlan();
   else if(a==="stop"){ if(ctl) ctl.abort() }
   else if(a==="copy"){
